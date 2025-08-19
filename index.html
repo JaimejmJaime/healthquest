@@ -420,35 +420,95 @@
             }
         };
         
-        // Daily Quest Templates (RD-approved, body-positive)
+        // Expanded Daily Quest Templates (RD-approved, body-positive)
         const questTemplates = {
             nutrition: [
-                { title: "Mindful Eating", description: "Eat one meal without distractions", xp: 25 },
-                { title: "Colorful Plate", description: "Include 3+ different colored foods", xp: 30 },
-                { title: "Hydration Hero", description: "Drink 8 glasses of water", xp: 20 },
-                { title: "Home Cooking", description: "Prepare a meal from scratch", xp: 35 },
-                { title: "Veggie Victory", description: "Include vegetables in 2+ meals", xp: 25 }
+                // Basic Level (15-25 XP)
+                { title: "Mindful Eating", description: "Eat one meal without distractions (no phone, TV, computer)", xp: 25, difficulty: "easy" },
+                { title: "Colorful Plate", description: "Include 3+ different colored foods in one meal", xp: 20, difficulty: "easy" },
+                { title: "Hydration Hero", description: "Drink 8 glasses of water throughout the day", xp: 20, difficulty: "easy" },
+                { title: "Breakfast Champion", description: "Eat something within 2 hours of waking up", xp: 15, difficulty: "easy" },
+                { title: "Veggie Victory", description: "Include vegetables in 2+ meals today", xp: 25, difficulty: "easy" },
+                
+                // Intermediate Level (25-35 XP)
+                { title: "Home Cooking", description: "Prepare a meal from scratch using whole ingredients", xp: 35, difficulty: "medium" },
+                { title: "Protein Power", description: "Include a protein source in each main meal", xp: 30, difficulty: "medium" },
+                { title: "Fiber Focus", description: "Choose whole grains over refined grains today", xp: 25, difficulty: "medium" },
+                { title: "Healthy Fats", description: "Include nuts, seeds, avocado, or olive oil in your meals", xp: 25, difficulty: "medium" },
+                { title: "Sugar Awareness", description: "Read labels and choose items with <10g added sugar", xp: 30, difficulty: "medium" },
+                { title: "Portion Wisdom", description: "Use smaller plates and eat until satisfied, not full", xp: 30, difficulty: "medium" },
+                
+                // Advanced Level (35-40 XP)
+                { title: "Meal Prep Master", description: "Prepare 3+ meals for tomorrow or this week", xp: 40, difficulty: "hard" },
+                { title: "Anti-Inflammatory", description: "Include 3+ anti-inflammatory foods (berries, leafy greens, fatty fish)", xp: 35, difficulty: "hard" },
+                { title: "Gut Health Guardian", description: "Include 2+ fermented or probiotic foods (yogurt, kimchi, etc.)", xp: 35, difficulty: "hard" },
+                { title: "Local Harvest", description: "Choose locally-sourced or seasonal ingredients for one meal", xp: 35, difficulty: "hard" }
             ],
             movement: [
-                { title: "Morning Movement", description: "5-minute stretch upon waking", xp: 20 },
-                { title: "Step Challenge", description: "Take 8,000+ steps today", xp: 30 },
-                { title: "Strength Builder", description: "15-minute strength training", xp: 35 },
-                { title: "Joyful Movement", description: "Dance, play, or sport for fun", xp: 30 },
-                { title: "Fresh Air", description: "Exercise outdoors for 20+ minutes", xp: 25 }
+                // Basic Level (15-25 XP)
+                { title: "Morning Movement", description: "5-minute gentle stretching or walking upon waking", xp: 20, difficulty: "easy" },
+                { title: "Stair Climber", description: "Take stairs instead of elevators/escalators today", xp: 15, difficulty: "easy" },
+                { title: "Desk Break", description: "Stand and move for 2 minutes every hour while working", xp: 20, difficulty: "easy" },
+                { title: "Walking Meditation", description: "Take a 10-minute mindful walk, focusing on your surroundings", xp: 25, difficulty: "easy" },
+                { title: "Dance Party", description: "Dance to 3+ songs - any style, any level!", xp: 25, difficulty: "easy" },
+                
+                // Intermediate Level (25-35 XP)
+                { title: "Step Challenge", description: "Take 8,000+ steps today (or 20% more than yesterday)", xp: 30, difficulty: "medium" },
+                { title: "Strength Builder", description: "15-minute strength training (bodyweight or weights)", xp: 35, difficulty: "medium" },
+                { title: "Cardio Burst", description: "20 minutes of elevated heart rate activity", xp: 30, difficulty: "medium" },
+                { title: "Fresh Air", description: "Exercise outdoors for 20+ minutes (any activity)", xp: 25, difficulty: "medium" },
+                { title: "Flexibility Flow", description: "20-minute yoga, stretching, or mobility routine", xp: 30, difficulty: "medium" },
+                { title: "Sport & Play", description: "Engage in recreational sports or active play for 30+ minutes", xp: 35, difficulty: "medium" },
+                
+                // Advanced Level (35-40 XP)
+                { title: "Endurance Explorer", description: "45+ minute continuous cardio activity at moderate intensity", xp: 40, difficulty: "hard" },
+                { title: "Strength Circuit", description: "Complete a 30-minute full-body strength circuit", xp: 40, difficulty: "hard" },
+                { title: "Balance Master", description: "20-minute balance and stability training session", xp: 35, difficulty: "hard" },
+                { title: "Active Adventure", description: "Try a new physical activity or sport today", xp: 35, difficulty: "hard" }
             ],
             recovery: [
-                { title: "Sleep Sanctuary", description: "7+ hours of quality sleep", xp: 35 },
-                { title: "Tech Sunset", description: "No screens 1 hour before bed", xp: 25 },
-                { title: "Rest Day", description: "Take active rest (gentle yoga/walk)", xp: 30 },
-                { title: "Bath Time", description: "Relaxing bath or shower ritual", xp: 20 },
-                { title: "Breathing Space", description: "5-minute breathing exercise", xp: 15 }
+                // Basic Level (15-25 XP)
+                { title: "Early Bird", description: "Go to bed 30 minutes earlier than usual", xp: 20, difficulty: "easy" },
+                { title: "Digital Sunset", description: "No screens 1 hour before your intended bedtime", xp: 25, difficulty: "easy" },
+                { title: "Breathing Space", description: "5-minute deep breathing or box breathing exercise", xp: 15, difficulty: "easy" },
+                { title: "Gentle Evening", description: "Create a calming evening routine (bath, tea, reading)", xp: 20, difficulty: "easy" },
+                { title: "Midday Reset", description: "Take a 10-20 minute power nap or quiet rest", xp: 20, difficulty: "easy" },
+                
+                // Intermediate Level (25-35 XP)
+                { title: "Sleep Sanctuary", description: "7+ hours of quality sleep in a cool, dark, quiet room", xp: 35, difficulty: "medium" },
+                { title: "Stress Release", description: "20 minutes of stress-relief activity (massage, music, art)", xp: 30, difficulty: "medium" },
+                { title: "Active Recovery", description: "Gentle movement like restorative yoga or easy walking", xp: 25, difficulty: "medium" },
+                { title: "Bath Ritual", description: "Take a relaxing bath with Epsom salts or essential oils", xp: 25, difficulty: "medium" },
+                { title: "Progressive Relaxation", description: "15-minute body scan or progressive muscle relaxation", xp: 30, difficulty: "medium" },
+                { title: "Social Recharge", description: "Spend quality time with loved ones without devices", xp: 30, difficulty: "medium" },
+                
+                // Advanced Level (35-40 XP)
+                { title: "Recovery Protocol", description: "Complete recovery routine: stretch, foam roll, and meditate", xp: 40, difficulty: "hard" },
+                { title: "Sleep Optimization", description: "Track and optimize: 8+ hours sleep, consistent bedtime", xp: 35, difficulty: "hard" },
+                { title: "Stress Mastery", description: "Practice advanced stress management (journaling + meditation + breathing)", xp: 40, difficulty: "hard" },
+                { title: "Digital Detox", description: "4+ hours completely offline (no phone, computer, TV)", xp: 35, difficulty: "hard" }
             ],
             mindfulness: [
-                { title: "Gratitude Practice", description: "Write 3 things you're grateful for", xp: 20 },
-                { title: "Meditation Moment", description: "5-minute meditation or mindfulness", xp: 25 },
-                { title: "Nature Connection", description: "Spend 10 minutes in nature", xp: 20 },
-                { title: "Body Appreciation", description: "Notice something your body did well", xp: 25 },
-                { title: "Mood Check", description: "Log your emotions without judgment", xp: 15 }
+                // Basic Level (15-25 XP)
+                { title: "Gratitude Moment", description: "Write down 3 things you're grateful for today", xp: 20, difficulty: "easy" },
+                { title: "Body Check-In", description: "Notice how your body feels right now without judgment", xp: 15, difficulty: "easy" },
+                { title: "Mindful Bites", description: "Eat one meal or snack with full attention to taste and texture", xp: 20, difficulty: "easy" },
+                { title: "Present Pause", description: "Take 5 mindful minutes - notice your breath and surroundings", xp: 15, difficulty: "easy" },
+                { title: "Kindness Practice", description: "Perform one act of kindness for yourself or someone else", xp: 25, difficulty: "easy" },
+                
+                // Intermediate Level (25-35 XP)
+                { title: "Meditation Session", description: "10-minute focused meditation or mindfulness practice", xp: 30, difficulty: "medium" },
+                { title: "Emotion Explorer", description: "Journal about your emotions today without trying to change them", xp: 25, difficulty: "medium" },
+                { title: "Nature Connection", description: "Spend 15+ minutes mindfully observing nature", xp: 25, difficulty: "medium" },
+                { title: "Values Reflection", description: "Reflect on your core values and how today aligned with them", xp: 30, difficulty: "medium" },
+                { title: "Mindful Movement", description: "Move your body with full awareness (yoga, tai chi, walking)", xp: 30, difficulty: "medium" },
+                { title: "Creativity Flow", description: "Engage in creative expression for 20+ minutes mindfully", xp: 25, difficulty: "medium" },
+                
+                // Advanced Level (35-40 XP)
+                { title: "Extended Meditation", description: "20+ minute meditation or contemplative practice", xp: 40, difficulty: "hard" },
+                { title: "Shadow Work", description: "Explore and journal about a challenging emotion or pattern", xp: 35, difficulty: "hard" },
+                { title: "Loving-Kindness", description: "Practice loving-kindness meditation for self and others", xp: 35, difficulty: "hard" },
+                { title: "Life Vision", description: "Deeply reflect on your purpose and set intentions for growth", xp: 40, difficulty: "hard" }
             ]
         };
         
@@ -463,23 +523,159 @@
             30: { emoji: "💎", title: "Lifestyle Legend" }
         };
         
-        // Initialize daily quests
+        // Enhanced quest generation with variety and smart selection
         function generateDailyQuests() {
             const quests = [];
             const categories = ['nutrition', 'movement', 'recovery', 'mindfulness'];
+            const today = new Date().toDateString();
+            
+            // Get quest history to avoid repetition
+            const recentQuests = getRecentQuestHistory(7); // Last 7 days
             
             categories.forEach(category => {
                 const templates = questTemplates[category];
-                const randomQuest = templates[Math.floor(Math.random() * templates.length)];
+                const availableQuests = templates.filter(quest => 
+                    !recentQuests.includes(quest.title) // Avoid recent quests
+                );
+                
+                // If we've done all quests recently, use full list
+                const questPool = availableQuests.length > 0 ? availableQuests : templates;
+                
+                // Smart selection based on user level and preferences
+                let selectedQuest;
+                if (gameData.playerLevel <= 5) {
+                    // Beginners get easier quests
+                    const easyQuests = questPool.filter(q => q.difficulty === 'easy');
+                    selectedQuest = easyQuests.length > 0 ? 
+                        easyQuests[Math.floor(Math.random() * easyQuests.length)] :
+                        questPool[Math.floor(Math.random() * questPool.length)];
+                } else if (gameData.playerLevel <= 10) {
+                    // Intermediate players get mix of easy and medium
+                    const suitableQuests = questPool.filter(q => q.difficulty === 'easy' || q.difficulty === 'medium');
+                    selectedQuest = suitableQuests.length > 0 ? 
+                        suitableQuests[Math.floor(Math.random() * suitableQuests.length)] :
+                        questPool[Math.floor(Math.random() * questPool.length)];
+                } else {
+                    // Advanced players get any difficulty
+                    selectedQuest = questPool[Math.floor(Math.random() * questPool.length)];
+                }
+                
                 quests.push({
-                    ...randomQuest,
+                    ...selectedQuest,
                     category,
                     completed: gameData.todaysHabits[category === 'movement' ? 'movement' : category],
-                    id: `${category}_${Date.now()}`
+                    id: `${category}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                    date: today
                 });
             });
             
+            // Store today's quests for history tracking
+            storeQuestHistory(quests);
+            
             return quests;
+        }
+        
+        // Quest history management
+        function getRecentQuestHistory(days = 7) {
+            const history = JSON.parse(localStorage.getItem('healthquest_quest_history') || '[]');
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - days);
+            
+            return history
+                .filter(entry => new Date(entry.date) >= cutoffDate)
+                .flatMap(entry => entry.quests.map(quest => quest.title));
+        }
+        
+        function storeQuestHistory(quests) {
+            const history = JSON.parse(localStorage.getItem('healthquest_quest_history') || '[]');
+            const today = new Date().toDateString();
+            
+            // Remove today's entry if it exists (regenerating quests)
+            const filteredHistory = history.filter(entry => entry.date !== today);
+            
+            // Add today's quests
+            filteredHistory.push({
+                date: today,
+                quests: quests.map(quest => ({
+                    title: quest.title,
+                    category: quest.category,
+                    difficulty: quest.difficulty,
+                    completed: quest.completed
+                }))
+            });
+            
+            // Keep only last 30 days
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const recentHistory = filteredHistory.filter(entry => new Date(entry.date) >= thirtyDaysAgo);
+            
+            localStorage.setItem('healthquest_quest_history', JSON.stringify(recentHistory));
+        }
+        
+        // Get quest completion stats for insights
+        function getQuestCompletionStats() {
+            const history = JSON.parse(localStorage.getItem('healthquest_quest_history') || '[]');
+            const stats = {
+                totalDays: history.length,
+                completionByCategory: {},
+                completionByDifficulty: {},
+                averageCompletionRate: 0,
+                bestStreak: 0,
+                currentStreak: 0
+            };
+            
+            if (history.length === 0) return stats;
+            
+            let totalQuests = 0;
+            let completedQuests = 0;
+            let currentStreak = 0;
+            let bestStreak = 0;
+            
+            // Calculate completion rates
+            history.forEach((day, index) => {
+                const dayCompleted = day.quests.filter(q => q.completed).length;
+                const dayTotal = day.quests.length;
+                
+                totalQuests += dayTotal;
+                completedQuests += dayCompleted;
+                
+                // Track streaks (days with >50% completion)
+                if (dayCompleted / dayTotal >= 0.5) {
+                    currentStreak++;
+                    bestStreak = Math.max(bestStreak, currentStreak);
+                } else {
+                    if (index === history.length - 1) {
+                        // If today wasn't good, reset current streak
+                        currentStreak = 0;
+                    }
+                }
+                
+                // Category stats
+                day.quests.forEach(quest => {
+                    if (!stats.completionByCategory[quest.category]) {
+                        stats.completionByCategory[quest.category] = { completed: 0, total: 0 };
+                    }
+                    stats.completionByCategory[quest.category].total++;
+                    if (quest.completed) {
+                        stats.completionByCategory[quest.category].completed++;
+                    }
+                    
+                    // Difficulty stats
+                    if (!stats.completionByDifficulty[quest.difficulty]) {
+                        stats.completionByDifficulty[quest.difficulty] = { completed: 0, total: 0 };
+                    }
+                    stats.completionByDifficulty[quest.difficulty].total++;
+                    if (quest.completed) {
+                        stats.completionByDifficulty[quest.difficulty].completed++;
+                    }
+                });
+            });
+            
+            stats.averageCompletionRate = totalQuests > 0 ? (completedQuests / totalQuests) * 100 : 0;
+            stats.bestStreak = bestStreak;
+            stats.currentStreak = currentStreak;
+            
+            return stats;
         }
         
         // XP and Leveling System
@@ -1197,15 +1393,72 @@
             const container = document.getElementById('dailyQuests');
             container.innerHTML = '';
             
+            // Add quest stats summary
+            const stats = getQuestCompletionStats();
+            if (stats.totalDays > 0) {
+                const statsEl = document.createElement('div');
+                statsEl.style.cssText = 'background: rgba(74, 222, 128, 0.1); border-radius: 10px; padding: 15px; margin-bottom: 20px; font-size: 0.9rem;';
+                statsEl.innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; text-align: center;">
+                        <div>
+                            <div style="font-weight: bold; color: #4ade80;">${Math.round(stats.averageCompletionRate)}%</div>
+                            <div style="opacity: 0.8;">Completion Rate</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: bold; color: #4ade80;">${stats.currentStreak}</div>
+                            <div style="opacity: 0.8;">Current Streak</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: bold; color: #4ade80;">${stats.bestStreak}</div>
+                            <div style="opacity: 0.8;">Best Streak</div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(statsEl);
+            }
+            
+            // Add difficulty legend
+            const legendEl = document.createElement('div');
+            legendEl.style.cssText = 'display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; font-size: 0.8rem;';
+            legendEl.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <div style="width: 12px; height: 12px; background: #4ade80; border-radius: 50%;"></div>
+                    <span>Easy (${15}-${25} XP)</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <div style="width: 12px; height: 12px; background: #f97316; border-radius: 50%;"></div>
+                    <span>Medium (${25}-${35} XP)</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <div style="width: 12px; height: 12px; background: #ef4444; border-radius: 50%;"></div>
+                    <span>Hard (${35}-${40} XP)</span>
+                </div>
+            `;
+            container.appendChild(legendEl);
+            
+            // Display today's quests
             dailyQuests.forEach(quest => {
                 const questEl = document.createElement('div');
+                
+                // Difficulty color coding
+                let difficultyColor = '#4ade80'; // Easy
+                if (quest.difficulty === 'medium') difficultyColor = '#f97316';
+                if (quest.difficulty === 'hard') difficultyColor = '#ef4444';
+                
                 questEl.className = `quest-item ${quest.category} ${quest.completed ? 'completed' : ''}`;
+                questEl.style.borderLeftColor = difficultyColor;
+                
                 questEl.innerHTML = `
                     <div class="quest-info">
-                        <div class="quest-title">${quest.title}</div>
+                        <div class="quest-title">
+                            ${quest.title}
+                            <span style="background: ${difficultyColor}; color: white; padding: 2px 6px; border-radius: 8px; font-size: 0.7rem; margin-left: 8px;">
+                                ${quest.difficulty.toUpperCase()}
+                            </span>
+                        </div>
                         <div class="quest-details">${quest.description}</div>
                     </div>
-                    <div style="display: flex; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
                         ${quest.completed ? 
                             '<span style="color: #4ade80; font-size: 1.5rem;">✅</span>' : 
                             `<button class="btn btn-small" onclick="completeQuest('${quest.id}', '${quest.category}')">Complete</button>`
@@ -1215,6 +1468,40 @@
                 `;
                 container.appendChild(questEl);
             });
+            
+            // Add regenerate button for testing (can be removed later)
+            if (!dailyQuests.every(q => q.completed)) {
+                const regenEl = document.createElement('div');
+                regenEl.style.cssText = 'text-align: center; margin-top: 20px; opacity: 0.7;';
+                regenEl.innerHTML = `
+                    <button class="btn btn-secondary btn-small" onclick="regenerateQuests()" style="font-size: 0.8rem;">
+                        🎲 Regenerate Quests (Testing)
+                    </button>
+                    <p style="font-size: 0.7rem; margin-top: 5px;">Note: Quests auto-refresh daily and avoid recent repeats</p>
+                `;
+                container.appendChild(regenEl);
+            }
+        }
+        
+        // Testing function to regenerate quests
+        function regenerateQuests() {
+            if (confirm('Regenerate today\'s quests? This will reset completion status.')) {
+                // Reset today's habits
+                gameData.todaysHabits = {
+                    nutrition: false,
+                    movement: false,
+                    recovery: false,
+                    mindfulness: false
+                };
+                
+                // Generate new quests
+                dailyQuests = generateDailyQuests();
+                updateQuestDisplay();
+                updateDisplay();
+                saveGameData();
+                
+                showCelebration('Quests Refreshed! 🎲', 'New quests generated with variety and difficulty matching your level!');
+            }
         }
         
         // Placeholder functions for integrations
