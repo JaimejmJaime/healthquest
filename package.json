@@ -1,0 +1,23 @@
+{
+    "name": "healthquest",
+    "version": "1.0.0",
+    "description": "Holistic fitness RPG - Level up through healthy habits, not just weight loss",
+    "main": "index.html",
+    "scripts": {
+      "dev": "vercel dev",
+      "build": "echo 'Static site - no build needed'",
+      "deploy": "vercel --prod"
+    },
+    "keywords": [
+      "health",
+      "gamification", 
+      "fitness",
+      "wellness",
+      "habits",
+      "RPG",
+      "WAHD"
+    ],
+    "author": "Your Name",
+    "license": "MIT",
+    "homepage": "https://healthquest.vercel.app"
+  }
