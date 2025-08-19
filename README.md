@@ -39,7 +39,7 @@ Days per week you complete healthy habits across multiple wellness areas. This f
 
 ## 🚀 Live Demo
 
-**[🌟 Play HealthQuest Now](https://your-deployed-url.vercel.app)**
+**[🌟 Play HealthQuest Now](https://healthquest-pi.vercel.app/)**
 
 ## 📸 Screenshots
 
@@ -260,3 +260,4 @@ MIT License - feel free to fork and create your own wellness adventures!
 **🌟 Start your holistic wellness adventure today! Transform healthy habits into an epic RPG journey.**
 
 [**🎮 Play Now**](https://your-deployed-url.vercel.app) | [**⭐ Star on GitHub**](https://github.com/yourusername/healthquest) | [**🐦 Follow Updates**](https://twitter.com/healthquestapp)
+
