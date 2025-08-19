@@ -318,36 +318,46 @@
                 <div class="progress-section" style="margin: 20px 0;">
                     <p>Event Progress</p>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: 42%; background: linear-gradient(90deg, #4ade80, #22d3ee);"></div>
-                        <div class="progress-text">Week 3 of 6</div>
+                        <div class="progress-fill" style="width: 17%; background: linear-gradient(90deg, #4ade80, #22d3ee);"></div>
+                        <div class="progress-text">Week 1 of 6</div>
                     </div>
                 </div>
                 
                 <div style="margin: 20px 0;">
-                    <h3>🌸 This Week's Theme: "Mindful Movement"</h3>
+                    <h3>🌱 This Week's Theme: "New Beginnings"</h3>
+                    <p style="margin-bottom: 15px;">Focus on establishing your foundation across all wellness areas</p>
+                    
                     <div class="quest-grid">
-                        <div class="quest-item mindfulness">
+                        <div class="quest-item nutrition">
                             <div class="quest-info">
-                                <div class="quest-title">Morning Stretch</div>
-                                <div class="quest-details">5-minute gentle stretching upon waking</div>
+                                <div class="quest-title">Mindful First Meal</div>
+                                <div class="quest-details">Eat breakfast without distractions</div>
                             </div>
-                            <div class="quest-reward">+30 XP</div>
+                            <div class="quest-reward">+25 XP</div>
                         </div>
                         
                         <div class="quest-item movement">
                             <div class="quest-info">
-                                <div class="quest-title">Nature Walk</div>
-                                <div class="quest-details">15-minute walk outdoors, focus on surroundings</div>
+                                <div class="quest-title">Morning Movement</div>
+                                <div class="quest-details">5-minute stretch or walk upon waking</div>
                             </div>
-                            <div class="quest-reward">+40 XP</div>
+                            <div class="quest-reward">+30 XP</div>
                         </div>
                         
                         <div class="quest-item recovery">
                             <div class="quest-info">
-                                <div class="quest-title">Evening Reflection</div>
-                                <div class="quest-details">3 things you're grateful for today</div>
+                                <div class="quest-title">Evening Wind-Down</div>
+                                <div class="quest-details">Create a 10-minute bedtime routine</div>
                             </div>
                             <div class="quest-reward">+25 XP</div>
+                        </div>
+                        
+                        <div class="quest-item mindfulness">
+                            <div class="quest-info">
+                                <div class="quest-title">Gratitude Moment</div>
+                                <div class="quest-details">Notice one thing you're grateful for</div>
+                            </div>
+                            <div class="quest-reward">+20 XP</div>
                         </div>
                     </div>
                 </div>
@@ -356,18 +366,20 @@
                     <h4>🏆 Event Leaderboard (Baseline Improvement)</h4>
                     <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
                         <p style="opacity: 0.7; text-align: center;">Complete your first week to see rankings!</p>
-                        <p style="opacity: 0.7; text-align: center;">Rankings will be based on your personal improvement</p>
+                        <p style="opacity: 0.7; text-align: center; font-size: 0.9rem;">Rankings based on your personal improvement, not absolute scores</p>
                     </div>
-                    <small style="opacity: 0.7;">Rankings based on personal improvement, not absolute scores</small>
                 </div>
                 
                 <div style="margin: 20px 0;">
-                    <h4>🎁 Upcoming Rewards</h4>
-                    <p>Week 2: Habit streak multipliers ⚡</p>
-                    <p>Week 3: New meditation avatars 🧘‍♀️</p>
-                    <p>Week 4: Spring-themed skill tree backgrounds 🌸</p>
-                    <p>Week 5: Exclusive "Spring Champion" title 🏆</p>
-                    <p>Week 6: Special avatar evolution 🌟</p>
+                    <h4>🎁 Event Rewards</h4>
+                    <div style="background: rgba(74, 222, 128, 0.1); border-radius: 10px; padding: 15px;">
+                        <p><strong>Week 1:</strong> Welcome badge 🌱</p>
+                        <p><strong>Week 2:</strong> Habit streak multipliers ⚡</p>
+                        <p><strong>Week 3:</strong> New meditation avatars 🧘‍♀️</p>
+                        <p><strong>Week 4:</strong> Spring-themed backgrounds 🌸</p>
+                        <p><strong>Week 5:</strong> Exclusive title unlocks 🏆</p>
+                        <p><strong>Week 6:</strong> Champion avatar evolution 🌟</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1337,17 +1349,100 @@
         // Initialize session tracking
         gameData.sessionStart = Date.now();
         
-        // Demo data for development
-        if (gameData.totalXP === 0) {
-            // Set some demo progress for testing
-            gameData.playerLevel = 5;
-            gameData.totalXP = 450;
-            gameData.currentXP = 50;
-            gameData.weeklyActiveHealthyDays = 4;
-            gameData.skills.nutrition.level = 3;
-            gameData.skills.strength.level = 2;
-            gameData.skills.cardio.level = 2;
-            gameData.skills.recovery.level = 1;
+        // Demo data removed - start fresh
+        // Update display with fresh start
+        function updateDisplay() {
+            // Player info
+            document.getElementById('playerLevel').textContent = gameData.playerLevel;
+            document.getElementById('playerName').textContent = gameData.playerName;
+            
+            // XP Progress
+            const xpForNext = gameData.playerLevel * 100;
+            const progressPercent = (gameData.currentXP / xpForNext) * 100;
+            document.getElementById('levelProgress').style.width = progressPercent + '%';
+            document.getElementById('xpText').textContent = `${gameData.currentXP} / ${xpForNext} XP`;
+            
+            // Skill Trees
+            Object.keys(gameData.skills).forEach(skill => {
+                const skillData = gameData.skills[skill];
+                const levelElement = document.getElementById(`${skill}Level`);
+                const progressElement = document.getElementById(`${skill}Progress`);
+                
+                if (levelElement) levelElement.textContent = skillData.level;
+                
+                if (progressElement) {
+                    const skillXpForNext = skillData.level * 50;
+                    const skillProgress = (skillData.xp / skillXpForNext) * 100;
+                    progressElement.style.width = skillProgress + '%';
+                }
+            });
+            
+            // WAHD
+            const wahd = calculateWAHD();
+            document.getElementById('wahdScore').textContent = wahd;
+            document.getElementById('weeklyDays').textContent = `${wahd}/7`;
+            
+            const weeklyProgressElement = document.getElementById('weeklyProgress');
+            if (weeklyProgressElement) {
+                weeklyProgressElement.style.width = `${(wahd/7)*100}%`;
+            }
+            
+            // Today's habits
+            const habitElements = {
+                nutrition: document.getElementById('nutritionToday'),
+                movement: document.getElementById('movementToday'),
+                recovery: document.getElementById('recoveryToday'),
+                mindfulness: document.getElementById('mindfulnessToday')
+            };
+            
+            Object.keys(habitElements).forEach(habit => {
+                const element = habitElements[habit];
+                if (element) {
+                    element.textContent = gameData.todaysHabits[habit === 'movement' ? 'movement' : habit] ? '✅' : '⭕';
+                }
+            });
+            
+            // Update quest notification
+            const incompleteQuests = dailyQuests.filter(q => !q.completed).length;
+            const notificationElement = document.getElementById('questNotification');
+            if (notificationElement) {
+                notificationElement.textContent = incompleteQuests;
+                notificationElement.style.display = incompleteQuests > 0 ? 'flex' : 'none';
+            }
+            
+            // XP Cap Warning
+            const xpCapWarning = document.getElementById('xpCapWarning');
+            if (xpCapWarning) {
+                xpCapWarning.style.display = gameData.dailyXP >= gameData.maxDailyXP ? 'block' : 'none';
+            }
+            
+            updateAvatarAppearance();
+            updateTodaysMealsDisplay();
+        }
+        
+        function updateTodaysMealsDisplay() {
+            const container = document.getElementById('todaysMeals');
+            if (!container) return;
+            
+            const today = new Date().toDateString();
+            const todaysMeals = gameData.meals.filter(meal => meal.date === today);
+            
+            container.innerHTML = '';
+            
+            if (todaysMeals.length === 0) {
+                container.innerHTML = '<p style="text-align: center; opacity: 0.7; font-size: 0.9rem;">No meals logged today</p>';
+                return;
+            }
+            
+            todaysMeals.forEach(meal => {
+                const mealEl = document.createElement('div');
+                mealEl.style.cssText = 'background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin: 5px 0; font-size: 0.9rem;';
+                mealEl.innerHTML = `
+                    <strong>${meal.name}</strong><br>
+                    <small>Felt: ${meal.feeling} • Portion: ${meal.portion}</small>
+                `;
+                container.appendChild(mealEl);
+            });
         }
     </script>
     
@@ -1912,7 +2007,7 @@
             
             <div class="north-star">
                 <h3>🌟 Your North Star Metric</h3>
-                <div class="wahd-display" id="wahdScore">4</div>
+                <div class="wahd-display" id="wahdScore">0</div>
                 <p>Weekly Active Healthy Days (WAHD)</p>
                 <small>Days this week you completed core habits across all skill trees</small>
             </div>
@@ -1923,7 +2018,7 @@
             <button class="tab-btn active" onclick="showTab('dashboard')">Dashboard</button>
             <button class="tab-btn" onclick="showTab('quests')">
                 Daily Quests
-                <span class="notification" id="questNotification">4</span>
+                <span class="notification" id="questNotification" style="display: none;">0</span>
             </button>
             <button class="tab-btn" onclick="showTab('logging')">Quick Log</button>
             <button class="tab-btn" onclick="showTab('squad')">Squad</button>
@@ -2007,10 +2102,10 @@
                 <div class="card">
                     <h2>📊 This Week's Progress</h2>
                     <div class="progress-section">
-                        <p>Active Healthy Days: <span id="weeklyDays">4/7</span></p>
+                        <p>Active Healthy Days: <span id="weeklyDays">0/7</span></p>
                         <div class="progress-bar">
-                            <div class="progress-fill" id="weeklyProgress" style="width: 57%"></div>
-                            <div class="progress-text">57%</div>
+                            <div class="progress-fill" id="weeklyProgress" style="width: 0%"></div>
+                            <div class="progress-text">0%</div>
                         </div>
                     </div>
                     
@@ -2018,19 +2113,19 @@
                         <h4>Today's Habit Completion</h4>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;">
                             <div style="text-align: center;">
-                                <div id="nutritionToday">✅</div>
+                                <div id="nutritionToday">⭕</div>
                                 <small>Nutrition</small>
                             </div>
                             <div style="text-align: center;">
-                                <div id="movementToday">✅</div>
+                                <div id="movementToday">⭕</div>
                                 <small>Movement</small>
                             </div>
                             <div style="text-align: center;">
-                                <div id="recoveryToday">❌</div>
+                                <div id="recoveryToday">⭕</div>
                                 <small>Recovery</small>
                             </div>
                             <div style="text-align: center;">
-                                <div id="mindfulnessToday">✅</div>
+                                <div id="mindfulnessToday">⭕</div>
                                 <small>Mindfulness</small>
                             </div>
                         </div>
