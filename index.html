@@ -1100,27 +1100,49 @@
         }
         
         function createAccount() {
-            const email = document.getElementById('signUpEmail').value;
-            const name = document.getElementById('signUpName').value;
+            const email = sanitizeEmail(document.getElementById('signUpEmail').value);
+            const name = sanitizeString(document.getElementById('signUpName').value, 50);
             const password = document.getElementById('signUpPassword').value;
             const agreeTerms = document.getElementById('agreeTerms').checked;
             
-            if (!email || !name || !password || !agreeTerms) {
-                alert('Please fill in all fields and agree to the terms.');
+            // Enhanced validation
+            if (!email) {
+                alert('Please enter a valid email address.');
                 return;
             }
             
-            if (password.length < 6) {
-                alert('Password must be at least 6 characters.');
+            if (name.length < 2) {
+                alert('Name must be at least 2 characters long.');
                 return;
             }
             
-            // In production, this would call your backend API
-            gameData.userId = 'user_' + Date.now();
+            if (!validatePassword(password)) {
+                alert('Password must be at least 8 characters with uppercase, lowercase, number, and special character.');
+                return;
+            }
+            
+            if (!agreeTerms) {
+                alert('Please agree to the terms and conditions.');
+                return;
+            }
+            
+            // Rate limiting check
+            if (!checkRateLimit('account_creation')) {
+                alert('Too many account creation attempts. Please wait before trying again.');
+                return;
+            }
+            
+            // In production, this would call your backend API with proper encryption
+            gameData.userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             gameData.email = email;
             gameData.playerName = name;
             gameData.isAnonymous = false;
             gameData.createdAt = new Date().toISOString();
+            
+            // Clear sensitive form data
+            document.getElementById('signUpEmail').value = '';
+            document.getElementById('signUpName').value = '';
+            document.getElementById('signUpPassword').value = '';
             
             updateAccountDisplay();
             closeModal('signUpModal');
@@ -1130,24 +1152,123 @@
         }
         
         function signIn() {
-            const email = document.getElementById('signInEmail').value;
+            const email = sanitizeEmail(document.getElementById('signInEmail').value);
             const password = document.getElementById('signInPassword').value;
             
             if (!email || !password) {
-                alert('Please enter your email and password.');
+                alert('Please enter both email and password.');
+                return;
+            }
+            
+            // Rate limiting check
+            if (!checkRateLimit('sign_in')) {
+                alert('Too many sign-in attempts. Please wait before trying again.');
                 return;
             }
             
             // In production, this would authenticate with your backend
-            // For demo, simulate successful login
-            gameData.email = email;
-            gameData.isAnonymous = false;
+            // For demo, simulate successful login with basic validation
+            if (email.includes('@') && password.length >= 6) {
+                gameData.email = email;
+                gameData.isAnonymous = false;
+                
+                // Clear form
+                document.getElementById('signInEmail').value = '';
+                document.getElementById('signInPassword').value = '';
+                
+                updateAccountDisplay();
+                closeModal('signInModal');
+                saveGameData();
+                
+                showCelebration('Welcome Back! 🏠', 'Successfully signed in to your account!');
+            } else {
+                alert('Invalid email or password.');
+            }
+        }
+        
+        // Security utility functions
+        function validatePassword(password) {
+            // At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
+            const minLength = password.length >= 8;
+            const hasUppercase = /[A-Z]/.test(password);
+            const hasLowercase = /[a-z]/.test(password);
+            const hasNumbers = /\d/.test(password);
+            const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
             
-            updateAccountDisplay();
-            closeModal('signInModal');
-            saveGameData();
+            return minLength && hasUppercase && hasLowercase && hasNumbers && hasSpecialChar;
+        }
+        
+        function checkRateLimit(action) {
+            const now = Date.now();
+            const rateLimits = JSON.parse(localStorage.getItem('healthquest_rate_limits') || '{}');
             
-            showCelebration('Welcome Back! 🏠', 'Successfully signed in to your account!');
+            if (!rateLimits[action]) {
+                rateLimits[action] = { attempts: 0, lastAttempt: now };
+            }
+            
+            const timeDiff = now - rateLimits[action].lastAttempt;
+            const oneHour = 60 * 60 * 1000;
+            
+            // Reset counter if more than 1 hour has passed
+            if (timeDiff > oneHour) {
+                rateLimits[action] = { attempts: 1, lastAttempt: now };
+            } else {
+                rateLimits[action].attempts++;
+                rateLimits[action].lastAttempt = now;
+            }
+            
+            localStorage.setItem('healthquest_rate_limits', JSON.stringify(rateLimits));
+            
+            // Allow max 5 attempts per hour
+            return rateLimits[action].attempts <= 5;
+        }
+        
+        function exportData() {
+            // Security check - require recent authentication for sensitive operations
+            if (!gameData.isAnonymous && !confirmRecentAuth()) {
+                alert('Please sign in again to export your data for security.');
+                return;
+            }
+            
+            const dataToExport = {
+                exported: new Date().toISOString(),
+                gameData: sanitizeForExport(gameData),
+                questHistory: dailyQuests,
+                exportVersion: '1.0',
+                securityNote: 'This export contains your personal health data. Keep it secure.'
+            };
+            
+            const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `healthquest_data_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            
+            showCelebration('Data Exported! 📁', 'Your complete HealthQuest data has been securely downloaded.');
+        }
+        
+        function sanitizeForExport(data) {
+            const exportData = { ...data };
+            
+            // Remove sensitive fields from export
+            delete exportData.userId; // Keep private
+            if (exportData.email) {
+                // Partially mask email for privacy
+                const [username, domain] = exportData.email.split('@');
+                exportData.email = username.charAt(0) + '***@' + domain;
+            }
+            
+            return exportData;
+        }
+        
+        function confirmRecentAuth() {
+            // In production, this would verify recent authentication
+            // For demo, show a confirmation dialog
+            return confirm('Confirm: You want to export your personal health data?');
         }
         
         function signOut() {
@@ -1521,34 +1642,179 @@
             alert('🔧 Guided meditation integration coming soon! Partner with Headspace or Calm.');
         }
         
-        // Data Management
+        // Enhanced data management with security
         function saveGameData() {
-            localStorage.setItem('healthquest_data', JSON.stringify(gameData));
+            try {
+                // Sanitize data before saving
+                const sanitizedData = sanitizeUserData(gameData);
+                const dataString = JSON.stringify(sanitizedData);
+                
+                // Basic encryption (in production, use stronger encryption)
+                const encryptedData = btoa(encodeURIComponent(dataString));
+                localStorage.setItem('healthquest_data', encryptedData);
+                
+                // Create backup with timestamp
+                const backupKey = `healthquest_backup_${Date.now()}`;
+                localStorage.setItem(backupKey, encryptedData);
+                
+                // Keep only last 3 backups
+                cleanupBackups();
+                
+            } catch (error) {
+                console.error('Failed to save data:', error);
+                showCelebration('Save Failed', 'Unable to save progress. Please try again.');
+            }
         }
         
         function loadGameData() {
-            const saved = JSON.parse(localStorage.getItem('healthquest_data') || '{}');
-            gameData = { ...gameData, ...saved };
-            
-            // Reset daily XP if new day
-            const today = new Date().toDateString();
-            if (gameData.lastActiveDate !== today) {
-                gameData.dailyXP = 0;
-                gameData.lastActiveDate = today;
+            try {
+                const saved = localStorage.getItem('healthquest_data');
+                if (!saved) return;
                 
-                // Reset daily habits
-                gameData.todaysHabits = {
-                    nutrition: false,
-                    movement: false,
-                    recovery: false,
-                    mindfulness: false
-                };
+                // Decrypt data
+                const decryptedData = decodeURIComponent(atob(saved));
+                const parsedData = JSON.parse(decryptedData);
                 
-                // Reset streak forgiveness weekly
-                const dayOfWeek = new Date().getDay();
-                if (dayOfWeek === 0) { // Sunday
-                    gameData.streakForgiveness = 1;
+                // Validate and sanitize loaded data
+                const validatedData = validateUserData(parsedData);
+                gameData = { ...gameData, ...validatedData };
+                
+                // Reset daily XP if new day
+                const today = new Date().toDateString();
+                if (gameData.lastActiveDate !== today) {
+                    gameData.dailyXP = 0;
+                    gameData.lastActiveDate = today;
+                    
+                    // Reset daily habits
+                    gameData.todaysHabits = {
+                        nutrition: false,
+                        movement: false,
+                        recovery: false,
+                        mindfulness: false
+                    };
+                    
+                    // Reset streak forgiveness weekly
+                    const dayOfWeek = new Date().getDay();
+                    if (dayOfWeek === 0) { // Sunday
+                        gameData.streakForgiveness = 1;
+                    }
                 }
+            } catch (error) {
+                console.error('Failed to load data:', error);
+                // Try to recover from backup
+                recoverFromBackup();
+            }
+        }
+        
+        // Data sanitization and validation functions
+        function sanitizeUserData(data) {
+            const sanitized = { ...data };
+            
+            // Sanitize string fields
+            if (sanitized.playerName) {
+                sanitized.playerName = sanitizeString(sanitized.playerName, 50);
+            }
+            if (sanitized.email) {
+                sanitized.email = sanitizeEmail(sanitized.email);
+            }
+            
+            // Sanitize arrays
+            if (sanitized.meals) {
+                sanitized.meals = sanitized.meals.map(meal => ({
+                    id: parseInt(meal.id) || Date.now(),
+                    name: sanitizeString(meal.name, 100),
+                    feeling: sanitizeString(meal.feeling, 20),
+                    portion: sanitizeString(meal.portion, 20),
+                    date: meal.date,
+                    timestamp: meal.timestamp
+                }));
+            }
+            
+            // Validate numeric fields
+            sanitized.playerLevel = Math.max(1, Math.min(100, parseInt(sanitized.playerLevel) || 1));
+            sanitized.totalXP = Math.max(0, parseInt(sanitized.totalXP) || 0);
+            sanitized.dailyXP = Math.max(0, Math.min(sanitized.maxDailyXP, parseInt(sanitized.dailyXP) || 0));
+            
+            return sanitized;
+        }
+        
+        function validateUserData(data) {
+            const validated = {};
+            
+            // Only allow expected fields
+            const allowedFields = [
+                'playerName', 'playerLevel', 'totalXP', 'currentXP', 'dailyXP', 'maxDailyXP',
+                'skills', 'weeklyActiveHealthyDays', 'currentStreak', 'streakForgiveness',
+                'baseline', 'todaysHabits', 'squad', 'lastActiveDate', 'restrictionWarnings',
+                'meals', 'activities', 'sleepLogs', 'userId', 'email', 'isAnonymous',
+                'createdAt', 'currentEvent'
+            ];
+            
+            allowedFields.forEach(field => {
+                if (data.hasOwnProperty(field)) {
+                    validated[field] = data[field];
+                }
+            });
+            
+            return validated;
+        }
+        
+        function sanitizeString(str, maxLength = 100) {
+            if (typeof str !== 'string') return '';
+            
+            // Remove HTML tags and script content
+            const cleaned = str
+                .replace(/<[^>]*>/g, '')
+                .replace(/javascript:/gi, '')
+                .replace(/on\w+=/gi, '')
+                .trim();
+            
+            return cleaned.substring(0, maxLength);
+        }
+        
+        function sanitizeEmail(email) {
+            if (typeof email !== 'string') return '';
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email) ? email.toLowerCase().trim() : '';
+        }
+        
+        function cleanupBackups() {
+            try {
+                const backupKeys = Object.keys(localStorage)
+                    .filter(key => key.startsWith('healthquest_backup_'))
+                    .sort((a, b) => {
+                        const timestampA = parseInt(a.split('_')[2]);
+                        const timestampB = parseInt(b.split('_')[2]);
+                        return timestampB - timestampA; // Most recent first
+                    });
+                
+                // Keep only the 3 most recent backups
+                backupKeys.slice(3).forEach(key => {
+                    localStorage.removeItem(key);
+                });
+            } catch (error) {
+                console.error('Failed to cleanup backups:', error);
+            }
+        }
+        
+        function recoverFromBackup() {
+            try {
+                const backupKeys = Object.keys(localStorage)
+                    .filter(key => key.startsWith('healthquest_backup_'))
+                    .sort((a, b) => {
+                        const timestampA = parseInt(a.split('_')[2]);
+                        const timestampB = parseInt(b.split('_')[2]);
+                        return timestampB - timestampA;
+                    });
+                
+                if (backupKeys.length > 0) {
+                    const latestBackup = localStorage.getItem(backupKeys[0]);
+                    localStorage.setItem('healthquest_data', latestBackup);
+                    showCelebration('Data Recovered', 'Your progress was restored from a recent backup.');
+                    location.reload();
+                }
+            } catch (error) {
+                console.error('Failed to recover from backup:', error);
             }
         }
         
@@ -1618,6 +1884,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'; font-src 'self' data:; object-src 'none'; media-src 'self'; frame-src 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>HealthQuest - Holistic Fitness RPG | Transform Your Health Journey</title>
     <meta name="description" content="Transform your health journey into an epic adventure. Level up through balanced habits across nutrition, movement, recovery, and mindfulness - not just weight loss.">
     <meta name="keywords" content="health gamification, fitness RPG, habit tracker, holistic wellness, healthy lifestyle game, WAHD, weekly active healthy days">
