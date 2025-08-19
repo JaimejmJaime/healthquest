@@ -1088,29 +1088,295 @@
             });
         }
         
-        // Placeholder functions for integrations
-        function scanBarcode() {
-            alert('🔧 Barcode scanning integration coming soon! Connect with food databases like USDA or Edamam.');
-        }
-        
-        function connectWearable() {
-            alert('🔧 Wearable integration coming soon! Connect with HealthKit, Google Fit, Fitbit, and more.');
-        }
-        
-        function startQuickWorkout() {
-            alert('🔧 Quick workout timer coming in next update! Choose from strength, cardio, or flexibility sessions.');
-        }
-        
-        function startMeditation() {
-            alert('🔧 Guided meditation integration coming soon! Partner with Headspace or Calm.');
-        }
-        
-        function inviteToSquad() {
-            alert('🔧 Squad invitations coming soon! Invite friends via email, SMS, or social links.');
+        // Squad Management
+        function createSquad() {
+            const squadName = prompt('Enter your squad name (2-20 characters):');
+            if (squadName && squadName.length >= 2 && squadName.length <= 20) {
+                gameData.squad = {
+                    id: 'squad_' + Date.now(),
+                    name: squadName,
+                    members: [{
+                        id: gameData.userId || 'anon_' + Date.now(),
+                        name: gameData.playerName,
+                        level: gameData.playerLevel,
+                        wahd: gameData.weeklyActiveHealthyDays,
+                        role: 'leader'
+                    }],
+                    createdAt: new Date().toISOString(),
+                    bossProgress: 100
+                };
+                
+                showCelebration('Squad Created! 🎉', `Welcome to "${squadName}"! Share your squad code with friends to invite them.`);
+                updateSquadDisplay();
+                saveGameData();
+            }
         }
         
         function findSquad() {
-            alert('🔧 Squad matching coming soon! Find squads based on goals, time zones, and activity levels.');
+            alert('🔧 Squad matching coming soon! You\'ll be able to find squads based on timezone, activity level, and goals.');
+        }
+        
+        function inviteToSquad() {
+            if (!gameData.squad) return;
+            
+            const inviteCode = gameData.squad.id;
+            const inviteMessage = `Join my HealthQuest squad "${gameData.squad.name}"! Use code: ${inviteCode}`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Join My HealthQuest Squad',
+                    text: inviteMessage,
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(inviteMessage).then(() => {
+                    alert('Squad invite copied to clipboard! Share with friends.');
+                });
+            }
+        }
+        
+        function leaveSquad() {
+            if (confirm('Are you sure you want to leave your squad? This cannot be undone.')) {
+                gameData.squad = null;
+                updateSquadDisplay();
+                saveGameData();
+                showCelebration('Squad Left', 'You can always join or create a new squad anytime!');
+            }
+        }
+        
+        function updateSquadDisplay() {
+            const noSquadMessage = document.getElementById('noSquadMessage');
+            const squadDisplay = document.getElementById('squadDisplay');
+            const bossBattle = document.getElementById('bossBattle');
+            
+            if (!gameData.squad) {
+                noSquadMessage.style.display = 'block';
+                squadDisplay.style.display = 'none';
+            } else {
+                noSquadMessage.style.display = 'none';
+                squadDisplay.style.display = 'block';
+                bossBattle.style.display = 'block';
+                
+                document.getElementById('squadName').textContent = gameData.squad.name;
+                
+                // Update squad members display
+                const membersContainer = document.getElementById('squadMembers');
+                membersContainer.innerHTML = '';
+                
+                gameData.squad.members.forEach(member => {
+                    const memberEl = document.createElement('div');
+                    memberEl.className = 'member-card';
+                    memberEl.innerHTML = `
+                        <div class="member-avatar">${getAvatarForLevel(member.level)}</div>
+                        <div><strong>${member.name}</strong> ${member.role === 'leader' ? '👑' : ''}</div>
+                        <div>Level ${member.level} • WAHD: ${member.wahd}/7</div>
+                    `;
+                    membersContainer.appendChild(memberEl);
+                });
+                
+                // Update boss battle progress
+                updateBossProgress();
+            }
+        }
+        
+        function getAvatarForLevel(level) {
+            if (level >= 25) return '💎';
+            if (level >= 20) return '⭐';
+            if (level >= 15) return '🏔️';
+            if (level >= 10) return '🌳';
+            if (level >= 5) return '🌿';
+            return '🌱';
+        }
+        
+        function updateBossProgress() {
+            if (!gameData.squad) return;
+            
+            // Calculate squad progress (demo calculation)
+            const avgWAHD = gameData.squad.members.reduce((sum, member) => sum + member.wahd, 0) / gameData.squad.members.length;
+            const bossHealth = Math.max(0, 100 - (avgWAHD * 14)); // 14% per WAHD point
+            
+            document.getElementById('bossHealth').style.width = bossHealth + '%';
+            
+            // Update skill percentages
+            document.getElementById('squadNutrition').textContent = Math.round(avgWAHD * 12) + '%';
+            document.getElementById('squadMovement').textContent = Math.round(avgWAHD * 11) + '%';
+            document.getElementById('squadRecovery').textContent = Math.round(avgWAHD * 10) + '%';
+            document.getElementById('squadMindfulness').textContent = Math.round(avgWAHD * 13) + '%';
+        }
+        
+        // Account Management
+        function showSignUpModal() {
+            document.getElementById('signUpModal').style.display = 'flex';
+        }
+        
+        function showSignInModal() {
+            document.getElementById('signInModal').style.display = 'flex';
+        }
+        
+        function createAccount() {
+            const email = document.getElementById('signUpEmail').value;
+            const name = document.getElementById('signUpName').value;
+            const password = document.getElementById('signUpPassword').value;
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+            
+            if (!email || !name || !password || !agreeTerms) {
+                alert('Please fill in all fields and agree to the terms.');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters.');
+                return;
+            }
+            
+            // In production, this would call your backend API
+            gameData.userId = 'user_' + Date.now();
+            gameData.email = email;
+            gameData.playerName = name;
+            gameData.isAnonymous = false;
+            gameData.createdAt = new Date().toISOString();
+            
+            updateAccountDisplay();
+            closeModal('signUpModal');
+            saveGameData();
+            
+            showCelebration('Welcome to HealthQuest! 🎉', `Account created successfully! Welcome ${name}!`);
+        }
+        
+        function signIn() {
+            const email = document.getElementById('signInEmail').value;
+            const password = document.getElementById('signInPassword').value;
+            
+            if (!email || !password) {
+                alert('Please enter your email and password.');
+                return;
+            }
+            
+            // In production, this would authenticate with your backend
+            // For demo, simulate successful login
+            gameData.email = email;
+            gameData.isAnonymous = false;
+            
+            updateAccountDisplay();
+            closeModal('signInModal');
+            saveGameData();
+            
+            showCelebration('Welcome Back! 🏠', 'Successfully signed in to your account!');
+        }
+        
+        function signOut() {
+            if (confirm('Are you sure you want to sign out? Your progress will be saved.')) {
+                gameData.userId = null;
+                gameData.email = null;
+                gameData.isAnonymous = true;
+                gameData.squad = null; // Remove squad when signing out
+                
+                updateAccountDisplay();
+                updateSquadDisplay();
+                saveGameData();
+                
+                showCelebration('Signed Out', 'You can always sign back in to restore your progress!');
+            }
+        }
+        
+        function updateAccountDisplay() {
+            const anonymousAccount = document.getElementById('anonymousAccount');
+            const signedInAccount = document.getElementById('signedInAccount');
+            
+            if (gameData.isAnonymous) {
+                anonymousAccount.style.display = 'block';
+                signedInAccount.style.display = 'none';
+            } else {
+                anonymousAccount.style.display = 'none';
+                signedInAccount.style.display = 'block';
+                
+                document.getElementById('userEmail').textContent = gameData.email || 'Unknown';
+                document.getElementById('joinDate').textContent = new Date(gameData.createdAt).toLocaleDateString();
+                document.getElementById('playerId').textContent = gameData.userId || '#Unknown';
+            }
+        }
+        
+        function forgotPassword() {
+            const email = prompt('Enter your email address to reset your password:');
+            if (email) {
+                alert('🔧 Password reset email sent! (Feature coming soon)');
+            }
+        }
+        
+        function exportData() {
+            const dataToExport = {
+                exported: new Date().toISOString(),
+                gameData: gameData,
+                questHistory: dailyQuests
+            };
+            
+            const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `healthquest_data_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+            
+            showCelebration('Data Exported! 📁', 'Your complete HealthQuest data has been downloaded.');
+        }
+        
+        function deleteAccount() {
+            const confirmation = prompt('Type "DELETE" to permanently delete your account and all data:');
+            if (confirmation === 'DELETE') {
+                // Clear all data
+                localStorage.removeItem('healthquest_data');
+                
+                // Reset to default state
+                gameData = {
+                    playerName: 'Health Seeker',
+                    playerLevel: 1,
+                    totalXP: 0,
+                    currentXP: 0,
+                    dailyXP: 0,
+                    maxDailyXP: 200,
+                    skills: {
+                        nutrition: { level: 1, xp: 0 },
+                        strength: { level: 1, xp: 0 },
+                        cardio: { level: 1, xp: 0 },
+                        recovery: { level: 1, xp: 0 }
+                    },
+                    weeklyActiveHealthyDays: 0,
+                    currentStreak: 0,
+                    streakForgiveness: 1,
+                    baseline: { wahd: 0 },
+                    todaysHabits: {
+                        nutrition: false,
+                        movement: false,
+                        recovery: false,
+                        mindfulness: false
+                    },
+                    squad: null,
+                    lastActiveDate: new Date().toDateString(),
+                    restrictionWarnings: 0,
+                    meals: [],
+                    activities: [],
+                    sleepLogs: [],
+                    userId: null,
+                    email: null,
+                    isAnonymous: true,
+                    createdAt: new Date().toISOString(),
+                    currentEvent: {
+                        name: "Spring Awakening",
+                        week: 1,
+                        totalWeeks: 6,
+                        progress: 0
+                    }
+                };
+                
+                updateDisplay();
+                updateAccountDisplay();
+                updateSquadDisplay();
+                
+                showCelebration('Account Deleted', 'Your account and all data have been permanently deleted. You can start a new journey anytime.');
+            }
         }
         
         // Data Management
