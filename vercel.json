@@ -2,7 +2,7 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg))",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
@@ -67,7 +67,7 @@
       ]
     },
     {
-      "source": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg))",
+      "source": "/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -82,4 +82,5 @@
     }
   }
 }
+
 
