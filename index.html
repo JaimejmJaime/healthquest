@@ -3,27 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self'; font-src 'self' data:; object-src 'none'; media-src 'self'; frame-src 'none';">
     <title>HealthQuest - Holistic Fitness RPG</title>
-    <meta name="description" content="Transform your health journey into an epic adventure. Level up through balanced habits across nutrition, movement, recovery, and mindfulness.">
+    <meta name="description" content="Transform your health journey into an epic adventure.">
     
     <!-- PWA Support -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#4ade80">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="HealthQuest">
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%234ade80' rx='4'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='16' text-anchor='middle' fill='white'%3E🌱%3C/text%3E%3C/svg%3E">
-    
-    <!-- Styles -->
-    <link rel="stylesheet" href="styles/variables.css">
-    <link rel="stylesheet" href="styles/base.css">
-    <link rel="stylesheet" href="styles/components.css">
-    <link rel="stylesheet" href="styles/layouts.css">
-    <link rel="stylesheet" href="styles/animations.css">
-    <link rel="stylesheet" href="styles/responsive.css">
+    <!-- Inline Critical CSS to prevent loading screen issues -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: inherit;
+        }
+        
+        .loading-content {
+            text-align: center;
+        }
+        
+        .loading-logo {
+            font-size: 4rem;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .fade-out {
+            animation: fadeOut 0.5s forwards;
+        }
+        
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #4ade80, #22d3ee);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ade80, #22d3ee);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .quest-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .quest-item.completed {
+            opacity: 0.6;
+        }
+        
+        .quest-item h4 {
+            margin: 0 0 8px 0;
+            color: #4ade80;
+        }
+        
+        .quest-item p {
+            margin: 0 0 8px 0;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .quest-item span {
+            color: #22d3ee;
+            font-weight: bold;
+        }
+        
+        .hero-section {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .hero-section h1 {
+            font-size: 3rem;
+            background: linear-gradient(45deg, #4ade80, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .toast {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            min-width: 250px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .app-root {
+            display: none;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
 </head>
 <body>
     <div id="app" class="app-container">
@@ -32,111 +182,63 @@
             <div class="loading-content">
                 <div class="loading-logo">🌱</div>
                 <h2>HealthQuest</h2>
-                <div class="loading-bar">
-                    <div class="loading-progress"></div>
-                </div>
                 <p id="loading-message">Loading your adventure...</p>
             </div>
         </div>
 
-        <!-- Main App Content (populated by JavaScript) -->
-        <div id="app-root" style="display: none;">
-            <!-- Hero Section -->
-            <header id="hero-section" class="hero-section"></header>
-            
-            <!-- Navigation -->
-            <nav id="navigation" class="nav-tabs"></nav>
-            
-            <!-- Content Area -->
-            <main id="content" class="content-area"></main>
-            
-            <!-- Floating Action Button -->
-            <button id="fab" class="fab" aria-label="Quick Actions">
-                <span class="fab-icon">➕</span>
-            </button>
-        </div>
+        <!-- Main App Content -->
+        <div id="app-root" class="app-root"></div>
 
         <!-- Toast Container -->
-        <div id="toast-container" class="toast-container" aria-live="polite"></div>
-        
-        <!-- Modal Container -->
-        <div id="modal-container" class="modal-container" aria-hidden="true"></div>
-        
-        <!-- Quick Actions Menu -->
-        <div id="quick-actions" class="quick-actions" style="display: none;"></div>
+        <div id="toast-container" class="toast-container"></div>
     </div>
 
-    <!-- Core Scripts -->
-    <script src="js/core/config.js"></script>
+    <!-- Core Scripts - Load in order -->
+    <script>
+        // Inline Config to ensure it's available immediately
+        const Config = {
+            VERSION: '2.0.0',
+            GAME: {
+                MAX_DAILY_XP: 200,
+                XP_PER_LEVEL: 100,
+                SKILL_XP_PER_LEVEL: 50,
+                MIN_HABITS_FOR_WAHD: 3,
+                STREAK_FORGIVENESS_DAYS: 1,
+                QUEST_HISTORY_DAYS: 30,
+                MAX_PLAYER_LEVEL: 100,
+                MAX_SKILL_LEVEL: 50
+            },
+            STORAGE: {
+                PLAYER_DATA: 'healthquest_player',
+                QUEST_HISTORY: 'healthquest_quests',
+                ACHIEVEMENTS: 'healthquest_achievements',
+                AUTO_SAVE_INTERVAL: 30000
+            },
+            FEATURES: {
+                ANALYTICS: true,
+                NOTIFICATIONS: true
+            }
+        };
+    </script>
+    
+    <!-- Load core files first -->
     <script src="js/core/constants.js"></script>
     <script src="js/core/eventbus.js"></script>
     <script src="js/core/storage.js"></script>
     
-    <!-- Models -->
+    <!-- Load models -->
     <script src="js/models/player.js"></script>
-    <script src="js/models/quest.js"></script>
-    <script src="js/models/achievement.js"></script>
-    <script src="js/models/habit.js"></script>
-    <script src="js/models/meal.js"></script>
-    <script src="js/models/activity.js"></script>
-    <script src="js/models/sleep.js"></script>
-    <script src="js/models/mood.js"></script>
+    <script src="js/models/stubs.js"></script>
     
-    <!-- Systems -->
+    <!-- Load systems -->
     <script src="js/systems/quest-system.js"></script>
-    <script src="js/systems/achievement-system.js"></script>
-    <script src="js/systems/analytics-system.js"></script>
-    <script src="js/systems/notification-system.js"></script>
-    <script src="js/systems/wahd-system.js"></script>
-    <script src="js/systems/streak-system.js"></script>
+    <script src="js/systems/stubs.js"></script>
     
-    <!-- UI Components -->
-    <script src="js/ui/components/hero.js"></script>
-    <script src="js/ui/components/navigation.js"></script>
-    <script src="js/ui/components/avatar.js"></script>
-    <script src="js/ui/components/progress-bar.js"></script>
-    <script src="js/ui/components/quest-card.js"></script>
-    <script src="js/ui/components/achievement-card.js"></script>
-    <script src="js/ui/components/stat-card.js"></script>
-    <script src="js/ui/components/chart.js"></script>
+    <!-- Load UI stubs -->
+    <script src="js/ui/stubs.js"></script>
     
-    <!-- UI Views -->
-    <script src="js/ui/views/dashboard.js"></script>
-    <script src="js/ui/views/quests.js"></script>
-    <script src="js/ui/views/progress.js"></script>
-    <script src="js/ui/views/nutrition.js"></script>
-    <script src="js/ui/views/movement.js"></script>
-    <script src="js/ui/views/recovery.js"></script>
-    <script src="js/ui/views/mindfulness.js"></script>
-    <script src="js/ui/views/achievements.js"></script>
-    <script src="js/ui/views/settings.js"></script>
-    
-    <!-- UI Modals -->
-    <script src="js/ui/modals/meal-modal.js"></script>
-    <script src="js/ui/modals/activity-modal.js"></script>
-    <script src="js/ui/modals/sleep-modal.js"></script>
-    <script src="js/ui/modals/mood-modal.js"></script>
-    <script src="js/ui/modals/celebration-modal.js"></script>
-    <script src="js/ui/modals/onboarding-modal.js"></script>
-    
-    <!-- UI Manager -->
-    <script src="js/ui/ui-manager.js"></script>
-    <script src="js/ui/toast.js"></script>
-    <script src="js/ui/modal.js"></script>
-    
-    <!-- Main Game -->
+    <!-- Load main game files -->
     <script src="js/game.js"></script>
     <script src="js/app.js"></script>
-    
-    <!-- Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => console.log('ServiceWorker registered'))
-                    .catch(err => console.log('ServiceWorker registration failed'));
-            });
-        }
-    </script>
 </body>
 </html>
