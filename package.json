@@ -5,15 +5,10 @@
   "main": "index.html",
   "scripts": {
     "dev": "npx live-server --port=3000",
-    "build": "npm run optimize",
-    "optimize": "npm run optimize:html && npm run optimize:css && npm run optimize:js",
-    "optimize:html": "npx html-minifier-terser index.html -o dist/index.html --collapse-whitespace --remove-comments",
-    "optimize:css": "npx cssnano styles/*.css styles/dist/*.css",
-    "optimize:js": "npx terser js/**/*.js -o dist/app.min.js",
-    "test": "echo 'No tests configured yet'",
+    "build": "echo 'Static site - no build required' && exit 0",
+    "test": "echo 'No tests configured yet' && exit 0",
     "deploy": "vercel --prod",
-    "preview": "vercel",
-    "analyze": "npx lighthouse https://healthquest.vercel.app --output html --output-path ./lighthouse-report.html"
+    "preview": "vercel"
   },
   "keywords": [
     "health",
@@ -23,7 +18,6 @@
     "wellness",
     "habits",
     "PWA",
-    "weight-loss",
     "nutrition",
     "mindfulness",
     "exercise",
@@ -40,11 +34,7 @@
     "url": "https://github.com/JaimejmJaime/healthquest/issues"
   },
   "devDependencies": {
-    "live-server": "^1.2.2",
-    "html-minifier-terser": "^7.2.0",
-    "cssnano": "^6.0.1",
-    "terser": "^5.26.0",
-    "lighthouse": "^11.4.0"
+    "live-server": "^1.2.2"
   },
   "engines": {
     "node": ">=16.0.0",
@@ -56,4 +46,3 @@
     "not dead"
   ]
 }
-
