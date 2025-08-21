@@ -2,7 +2,7 @@
   "version": 2,
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg))",
       "destination": "/index.html"
     }
   ],
@@ -82,3 +82,4 @@
     }
   }
 }
+
