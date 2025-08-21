@@ -182,7 +182,7 @@ class Player {
     
     checkLevelUp() {
         let levelsGained = 0;
-        const xpNeeded = this.getXPForNextLevel();
+        let xpNeeded = this.getXPForNextLevel();
         
         while (this.currentXP >= xpNeeded && this.level < Config.GAME.MAX_PLAYER_LEVEL) {
             this.level++;
@@ -200,13 +200,16 @@ class Player {
                 player: this,
                 newLevel: this.level
             });
+            
+            // Recalculate XP needed for next level
+            xpNeeded = this.getXPForNextLevel();
         }
         
         return {
             leveled: levelsGained > 0,
             levelsGained,
             newLevel: this.level,
-            nextLevelXP: this.getXPForNextLevel(),
+            nextLevelXP: xpNeeded,
             currentXP: this.currentXP
         };
     }
@@ -260,7 +263,7 @@ class Player {
     
     checkSkillLevelUp(skillName) {
         const skill = this.skills[skillName];
-        const xpNeeded = skill.level * Config.GAME.SKILL_XP_PER_LEVEL;
+        let xpNeeded = skill.level * Config.GAME.SKILL_XP_PER_LEVEL;
         
         while (skill.xp >= xpNeeded && skill.level < Config.GAME.MAX_SKILL_LEVEL) {
             skill.level++;
@@ -281,6 +284,9 @@ class Player {
                 skill: skillName,
                 level: skill.level
             });
+            
+            // Recalculate XP needed for next level
+            xpNeeded = skill.level * Config.GAME.SKILL_XP_PER_LEVEL;
         }
     }
     
@@ -290,6 +296,13 @@ class Player {
                 5: { id: 'meal_prep', name: 'Meal Prep Master', bonus: '10% XP bonus for meal logging' },
                 10: { id: 'intuitive', name: 'Intuitive Eater', bonus: 'Unlock mindful eating quests' },
                 15: { id: 'chef', name: 'Home Chef', bonus: '15% XP for home-cooked meals' },
+                20: { id: 'nutritionist', name: 'Nutrition Expert', bonus: 'Unlock nutrition challenges' },
+                25: { id: 'balanced', name: 'Balanced Plate', bonus: 'Double XP for balanced meals' }
+            },
+            strength: {
+                5: { id: 'iron_will', name: 'Iron Will', bonus: '5% XP bonus for all activities' },
+                10: { id: 'powerhouse', name: 'Powerhouse', bonus: 'Unlock strength challenges' },
+                15: { id: 'titan', name: 'Titan Endurance', bonus: 'Reduced recovery time' },
                 20: { id: 'hercules', name: 'Hercules Strength', bonus: '20% XP for strength training' },
                 25: { id: 'olympian', name: 'Olympian', bonus: 'Unlock legendary workouts' }
             },
@@ -372,7 +385,10 @@ class Player {
             25: { type: 'theme', item: 'sunset' },
             30: { type: 'badge', item: 'master_badge' },
             40: { type: 'title', item: 'Legend' },
-            50: { type: 'theme', item: 'galaxy' }
+            50: { type: 'theme', item: 'galaxy' },
+            60: { type: 'powerup', item: 'double_xp' },
+            75: { type: 'badge', item: 'transcendent' },
+            100: { type: 'title', item: 'Eternal Guardian' }
         };
         
         const reward = levelRewards[this.level];
@@ -387,9 +403,10 @@ class Player {
     }
     
     addToInventory(type, item) {
-        if (this.inventory[type + 's']) {
-            if (!this.inventory[type + 's'].includes(item)) {
-                this.inventory[type + 's'].push(item);
+        const pluralType = type + 's';
+        if (this.inventory[pluralType]) {
+            if (!this.inventory[pluralType].includes(item)) {
+                this.inventory[pluralType].push(item);
             }
         }
     }
@@ -486,14 +503,51 @@ class Player {
     }
     
     // Statistics
-    incrementStat(category, stat, value = 1) {
-        if (this.stats[category] !== undefined) {
-            if (typeof this.stats[category] === 'number') {
-                this.stats[category] += value;
-            } else if (this.stats[category][stat] !== undefined) {
-                this.stats[category][stat] += value;
+    incrementStat(statName, value = 1) {
+        // Handle nested stats
+        if (statName.includes('.')) {
+            const parts = statName.split('.');
+            let current = this.stats;
+            
+            for (let i = 0; i < parts.length - 1; i++) {
+                if (!current[parts[i]]) {
+                    current[parts[i]] = {};
+                }
+                current = current[parts[i]];
+            }
+            
+            const finalKey = parts[parts.length - 1];
+            if (typeof current[finalKey] === 'number') {
+                current[finalKey] += value;
+            } else {
+                current[finalKey] = value;
+            }
+        } else {
+            // Handle direct stats
+            if (typeof this.stats[statName] === 'number') {
+                this.stats[statName] += value;
+            } else {
+                this.stats[statName] = value;
             }
         }
+    }
+    
+    getStat(statName) {
+        if (statName.includes('.')) {
+            const parts = statName.split('.');
+            let current = this.stats;
+            
+            for (const part of parts) {
+                if (current[part] === undefined) {
+                    return 0;
+                }
+                current = current[part];
+            }
+            
+            return current;
+        }
+        
+        return this.stats[statName] || 0;
     }
     
     // Achievement Management
@@ -534,7 +588,21 @@ class Player {
         return false;
     }
     
-    // Weight Tracking (Optional)
+    getSetting(path) {
+        const parts = path.split('.');
+        let current = this.settings;
+        
+        for (const part of parts) {
+            if (current[part] === undefined) {
+                return null;
+            }
+            current = current[part];
+        }
+        
+        return current;
+    }
+    
+    // Weight Tracking (Optional, Body-Positive)
     updateWeight(weight) {
         if (!this.stats.weight.trackingEnabled) {
             return false;
@@ -558,6 +626,37 @@ class Player {
             weight: weight
         });
         
+        return true;
+    }
+    
+    // Habit Logging
+    logMeal(mealData) {
+        this.incrementStat('totalMealsLogged');
+        EventBus.emit('meal-logged', { player: this, meal: mealData });
+        return true;
+    }
+    
+    logActivity(activityData) {
+        this.incrementStat('totalActivitiesLogged');
+        this.incrementStat('totalMinutesActive', activityData.duration || 0);
+        EventBus.emit('activity-logged', { player: this, activity: activityData });
+        return true;
+    }
+    
+    logSleep(sleepData) {
+        this.incrementStat('totalSleepLogged');
+        
+        // Update average sleep hours
+        const totalHours = this.stats.averageSleepHours * (this.stats.totalSleepLogged - 1) + sleepData.hours;
+        this.stats.averageSleepHours = totalHours / this.stats.totalSleepLogged;
+        
+        EventBus.emit('sleep-logged', { player: this, sleep: sleepData });
+        return true;
+    }
+    
+    logMood(moodData) {
+        this.incrementStat('totalMoodCheckins');
+        EventBus.emit('mood-logged', { player: this, mood: moodData });
         return true;
     }
     
@@ -594,6 +693,10 @@ class Player {
             errors.push('Player name is required');
         }
         
+        if (this.name.length > 50) {
+            errors.push('Player name must be less than 50 characters');
+        }
+        
         if (this.level < 1 || this.level > Config.GAME.MAX_PLAYER_LEVEL) {
             errors.push('Invalid player level');
         }
@@ -602,16 +705,67 @@ class Player {
             errors.push('XP values cannot be negative');
         }
         
+        if (this.dailyXP > Config.GAME.MAX_DAILY_XP) {
+            errors.push('Daily XP exceeds maximum');
+        }
+        
+        // Validate skills
+        Object.entries(this.skills).forEach(([name, skill]) => {
+            if (skill.level < 1 || skill.level > Config.GAME.MAX_SKILL_LEVEL) {
+                errors.push(`Invalid ${name} skill level`);
+            }
+            if (skill.xp < 0 || skill.totalXP < 0) {
+                errors.push(`Invalid ${name} skill XP`);
+            }
+        });
+        
         return {
             valid: errors.length === 0,
             errors
         };
     }
-} 'nutritionist', name: 'Nutrition Expert', bonus: 'Unlock nutrition challenges' },
-                25: { id: 'balanced', name: 'Balanced Plate', bonus: 'Double XP for balanced meals' }
-            },
-            strength: {
-                5: { id: 'iron_will', name: 'Iron Will', bonus: '5% XP bonus for all activities' },
-                10: { id: 'powerhouse', name: 'Powerhouse', bonus: 'Unlock strength challenges' },
-                15: { id: 'titan', name: 'Titan Endurance', bonus: 'Reduced recovery time' },
-                20: { id:
+    
+    // Utility Methods
+    getTitle() {
+        return this.avatar.title || 'Health Seeker';
+    }
+    
+    getAvatar() {
+        return this.avatar.emoji || '🌱';
+    }
+    
+    getTotalStats() {
+        return {
+            level: this.level,
+            totalXP: this.totalXP,
+            questsCompleted: this.stats.questsCompleted,
+            achievementsUnlocked: this.achievements.length,
+            currentStreak: this.stats.streaks.current,
+            wahd: this.stats.wahd.current,
+            totalActivities: this.stats.totalActivitiesLogged,
+            totalMeals: this.stats.totalMealsLogged,
+            averageSleep: Math.round(this.stats.averageSleepHours * 10) / 10
+        };
+    }
+    
+    getSkillLevels() {
+        const levels = {};
+        Object.entries(this.skills).forEach(([name, skill]) => {
+            levels[name] = skill.level;
+        });
+        return levels;
+    }
+    
+    getTotalSkillLevel() {
+        return Object.values(this.skills).reduce((sum, skill) => sum + skill.level, 0);
+    }
+    
+    isNewPlayer() {
+        return this.level === 1 && this.stats.questsCompleted === 0;
+    }
+}
+
+// Export for use in other modules
+if (typeof window !== 'undefined') {
+    window.Player = Player;
+}
