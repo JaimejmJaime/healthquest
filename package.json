@@ -1,25 +1,33 @@
 {
   "name": "healthquest",
-  "version": "1.0.0",
-  "description": "Holistic fitness RPG - Level up through healthy habits, not just weight loss",
+  "version": "2.0.0",
+  "description": "Holistic fitness RPG - Transform your health journey into an epic adventure",
   "main": "index.html",
   "scripts": {
-    "dev": "vercel dev",
-    "build": "echo 'Static site - no build needed'",
-    "deploy": "vercel --prod"
+    "dev": "npx live-server --port=3000",
+    "build": "npm run optimize",
+    "optimize": "npm run optimize:html && npm run optimize:css && npm run optimize:js",
+    "optimize:html": "npx html-minifier-terser index.html -o dist/index.html --collapse-whitespace --remove-comments",
+    "optimize:css": "npx cssnano styles/*.css styles/dist/*.css",
+    "optimize:js": "npx terser js/**/*.js -o dist/app.min.js",
+    "test": "echo 'No tests configured yet'",
+    "deploy": "vercel --prod",
+    "preview": "vercel",
+    "analyze": "npx lighthouse https://healthquest.vercel.app --output html --output-path ./lighthouse-report.html"
   },
   "keywords": [
     "health",
-    "gamification", 
     "fitness",
+    "gamification",
+    "RPG",
     "wellness",
     "habits",
-    "RPG",
-    "WAHD",
-    "holistic-health",
+    "PWA",
     "weight-loss",
     "nutrition",
-    "mindfulness"
+    "mindfulness",
+    "exercise",
+    "sleep-tracking"
   ],
   "author": "HealthQuest Team",
   "license": "MIT",
@@ -30,5 +38,21 @@
   },
   "bugs": {
     "url": "https://github.com/yourusername/healthquest/issues"
-  }
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "html-minifier-terser": "^7.2.0",
+    "cssnano": "^6.0.1",
+    "terser": "^5.26.0",
+    "lighthouse": "^11.4.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
 }
