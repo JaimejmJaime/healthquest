@@ -1,6 +1,6 @@
 # 🌟 HealthQuest - Holistic Fitness RPG v2.0
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/healthquest)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/JaimejmJaime/healthquest)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
@@ -26,7 +26,7 @@ Transform your health journey into an epic adventure! Level up through balanced 
 npm i -g vercel
 
 # Clone the repo
-git clone https://github.com/yourusername/healthquest.git
+git clone https://github.com/JaimejmJaime/healthquest.git
 cd healthquest
 
 # Deploy to Vercel
@@ -77,3 +77,4 @@ healthquest/
 │   ├── ui/             # UI components
 │   │   ├── components/ # Reusable components
 │
+
