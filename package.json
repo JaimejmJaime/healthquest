@@ -34,10 +34,10 @@
   "homepage": "https://healthquest.vercel.app",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/healthquest.git"
+    "url": "git+https://github.com/JaimejmJaime/healthquest.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/healthquest/issues"
+    "url": "https://github.com/JaimejmJaime/healthquest/issues"
   },
   "devDependencies": {
     "live-server": "^1.2.2",
@@ -56,3 +56,4 @@
     "not dead"
   ]
 }
+
