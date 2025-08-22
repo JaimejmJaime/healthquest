@@ -10,21 +10,40 @@
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#4ade80">
     
-    <!-- Inline Critical CSS to prevent loading screen issues -->
     <style>
+        /* Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
+        :root {
+            --primary: #4ade80;
+            --primary-dark: #22c55e;
+            --secondary: #22d3ee;
+            --accent: #a78bfa;
+            --success: #10b981;
+            --warning: #fbbf24;
+            --danger: #ef4444;
+            --bg-dark: #0d1117;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --bg-card-hover: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            color: #fff;
+            color: var(--text-primary);
             min-height: 100vh;
+            overflow-x: hidden;
         }
         
+        /* Loading Screen */
         .loading-screen {
             position: fixed;
             inset: 0;
@@ -32,6 +51,7 @@
             align-items: center;
             justify-content: center;
             background: inherit;
+            z-index: 9999;
         }
         
         .loading-content {
@@ -56,189 +76,1457 @@
             to { opacity: 0; visibility: hidden; }
         }
         
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            padding: 24px;
-            margin: 20px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .btn {
-            background: linear-gradient(135deg, #4ade80, #22d3ee);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .progress-bar {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            height: 20px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4ade80, #22d3ee);
-            border-radius: 10px;
-            transition: width 0.5s ease;
-        }
-        
-        .quest-item {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            padding: 16px;
-            margin: 10px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .quest-item.completed {
-            opacity: 0.6;
-        }
-        
-        .quest-item h4 {
-            margin: 0 0 8px 0;
-            color: #4ade80;
-        }
-        
-        .quest-item p {
-            margin: 0 0 8px 0;
-            color: rgba(255, 255, 255, 0.8);
-        }
-        
-        .quest-item span {
-            color: #22d3ee;
-            font-weight: bold;
-        }
-        
-        .hero-section {
-            text-align: center;
-            padding: 40px 20px;
-        }
-        
-        .hero-section h1 {
-            font-size: 3rem;
-            background: linear-gradient(45deg, #4ade80, #22d3ee);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-        
-        .toast {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            min-width: 250px;
-            animation: slideIn 0.3s ease;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
-        
-        .app-root {
+        /* Layout */
+        .app-container {
             display: none;
+            min-height: 100vh;
         }
         
-        .fade-in {
-            animation: fadeIn 0.5s ease;
+        .app-container.active {
+            display: block;
+            animation: fadeIn 0.5s;
         }
         
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
         }
+        
+        /* Header */
+        .header {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .level-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        
+        /* Navigation */
+        .nav-tabs {
+            background: var(--bg-card);
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+        
+        .nav-tabs-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .tab-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+        
+        .tab-btn:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-color: transparent;
+        }
+        
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: slideUp 0.3s;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+        }
+        
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .card h3 {
+            color: var(--secondary);
+            margin-bottom: 0.75rem;
+        }
+        
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .avatar-section {
+            text-align: center;
+        }
+        
+        .avatar-display {
+            font-size: 5rem;
+            margin: 1rem 0;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .avatar-title {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        
+        /* Progress Bars */
+        .progress-bar {
+            background: var(--bg-card-hover);
+            border-radius: 10px;
+            height: 24px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.875rem;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        /* Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .skill-item {
+            text-align: center;
+            padding: 1rem;
+            background: var(--bg-card-hover);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        
+        .skill-item:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+        
+        .skill-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .skill-name {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: capitalize;
+        }
+        
+        .skill-level {
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        /* Quest Items */
+        .quest-item {
+            background: var(--bg-card-hover);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+        }
+        
+        .quest-item:hover {
+            transform: translateX(4px);
+        }
+        
+        .quest-item.completed {
+            opacity: 0.7;
+            background: rgba(74, 222, 128, 0.1);
+        }
+        
+        .quest-item.nutrition { border-left-color: var(--primary); }
+        .quest-item.movement { border-left-color: var(--warning); }
+        .quest-item.recovery { border-left-color: var(--accent); }
+        .quest-item.mindfulness { border-left-color: var(--secondary); }
+        
+        .quest-info h4 {
+            margin-bottom: 0.25rem;
+        }
+        
+        .quest-info p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .quest-meta {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .xp-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.125rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        
+        .difficulty {
+            padding: 0.125rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        
+        .difficulty.easy { background: var(--success); color: white; }
+        .difficulty.medium { background: var(--warning); color: black; }
+        .difficulty.hard { background: var(--danger); color: white; }
+        
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+        
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+        
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-card-hover);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2);
+        }
+        
+        select.form-control {
+            cursor: pointer;
+        }
+        
+        /* Quick Log Grid */
+        .quick-log-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .log-card {
+            background: var(--bg-card-hover);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .log-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+        }
+        
+        .log-card-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .log-card-title {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        
+        .log-card-description {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-card {
+            background: var(--bg-card-hover);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-dark);
+            border-radius: 12px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+            border: 1px solid var(--border);
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+        }
+        
+        .toast {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            min-width: 250px;
+            animation: slideInRight 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast.warning { border-left: 4px solid var(--warning); }
+        .toast.info { border-left: 4px solid var(--secondary); }
+        
+        /* Week Progress */
+        .week-progress {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: space-between;
+            margin: 1rem 0;
+        }
+        
+        .day-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-card-hover);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            transition: all 0.3s;
+        }
+        
+        .day-circle.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: var(--primary);
+        }
+        
+        .day-circle.today {
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.3);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs-inner {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div id="app" class="app-container">
-        <!-- Loading Screen -->
-        <div id="loading-screen" class="loading-screen">
-            <div class="loading-content">
-                <div class="loading-logo">🌱</div>
-                <h2>HealthQuest</h2>
-                <p id="loading-message">Loading your adventure...</p>
-            </div>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">🌱</div>
+            <h2>HealthQuest</h2>
+            <p id="loading-message">Loading your adventure...</p>
         </div>
-
-        <!-- Main App Content -->
-        <div id="app-root" class="app-root"></div>
-
-        <!-- Toast Container -->
-        <div id="toast-container" class="toast-container"></div>
     </div>
 
-    <!-- Core Scripts - Load in order -->
+    <!-- Main App -->
+    <div id="app" class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span>🌱</span>
+                    <span>HealthQuest</span>
+                </div>
+                <div class="user-info">
+                    <span id="user-name">Health Seeker</span>
+                    <span class="level-badge">Level <span id="user-level">1</span></span>
+                    <button class="btn btn-sm" onclick="openAccountModal()">⚙️</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <div class="nav-tabs-inner">
+                <button class="tab-btn active" onclick="switchTab('dashboard')">
+                    <span>🏠</span>
+                    <span>Dashboard</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('quests')">
+                    <span>⚔️</span>
+                    <span>Daily Quests</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('log')">
+                    <span>📝</span>
+                    <span>Quick Log</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('squad')">
+                    <span>👥</span>
+                    <span>Squad</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('events')">
+                    <span>🎉</span>
+                    <span>Live Events</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('progress')">
+                    <span>📊</span>
+                    <span>Progress</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard-tab" class="tab-content active">
+                <div class="dashboard-grid">
+                    <!-- Avatar Card -->
+                    <div class="card avatar-section">
+                        <h2>Your Avatar</h2>
+                        <div class="avatar-display" id="avatar-display">🌱</div>
+                        <h3 id="avatar-title">Novice Wellness Warrior</h3>
+                        <p class="avatar-title">Transform through balanced habits</p>
+                    </div>
+
+                    <!-- XP Progress Card -->
+                    <div class="card">
+                        <h2>Experience Progress</h2>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="xp-progress" style="width: 0%">
+                                <span class="progress-text"><span id="current-xp">0</span> / <span id="max-xp">100</span> XP</span>
+                            </div>
+                        </div>
+                        <p>Daily XP: <span id="daily-xp">0</span> / 200</p>
+                        
+                        <h3 style="margin-top: 1rem;">Skill Levels</h3>
+                        <div class="skills-grid">
+                            <div class="skill-item">
+                                <div class="skill-icon">🥗</div>
+                                <div class="skill-name">Nutrition</div>
+                                <div class="skill-level">Lv <span id="skill-nutrition">1</span></div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-icon">💪</div>
+                                <div class="skill-name">Strength</div>
+                                <div class="skill-level">Lv <span id="skill-strength">1</span></div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-icon">🏃</div>
+                                <div class="skill-name">Cardio</div>
+                                <div class="skill-level">Lv <span id="skill-cardio">1</span></div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-icon">😴</div>
+                                <div class="skill-name">Recovery</div>
+                                <div class="skill-level">Lv <span id="skill-recovery">1</span></div>
+                            </div>
+                            <div class="skill-item">
+                                <div class="skill-icon">🧘</div>
+                                <div class="skill-name">Mindfulness</div>
+                                <div class="skill-level">Lv <span id="skill-mindfulness">1</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Week Progress Card -->
+                    <div class="card">
+                        <h2>This Week's WAHD</h2>
+                        <p style="font-size: 2rem; text-align: center; color: var(--primary);">
+                            <span id="wahd-current">0</span> / 7
+                        </p>
+                        <p style="text-align: center; color: var(--text-muted);">Weekly Active Healthy Days</p>
+                        
+                        <div class="week-progress" id="week-progress">
+                            <div class="day-circle" data-day="0">M</div>
+                            <div class="day-circle" data-day="1">T</div>
+                            <div class="day-circle" data-day="2">W</div>
+                            <div class="day-circle" data-day="3">T</div>
+                            <div class="day-circle" data-day="4">F</div>
+                            <div class="day-circle" data-day="5">S</div>
+                            <div class="day-circle" data-day="6">S</div>
+                        </div>
+                        
+                        <h3 style="margin-top: 1rem;">Current Streak</h3>
+                        <p style="font-size: 1.5rem; text-align: center;">
+                            🔥 <span id="current-streak">0</span> days
+                        </p>
+                    </div>
+
+                    <!-- Quick Stats Card -->
+                    <div class="card">
+                        <h2>Your Stats</h2>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="quests-completed">0</div>
+                                <div class="stat-label">Quests Done</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="perfect-days">0</div>
+                                <div class="stat-label">Perfect Days</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="total-activities">0</div>
+                                <div class="stat-label">Activities</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="achievements-count">0</div>
+                                <div class="stat-label">Achievements</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Quests Tab -->
+            <div id="quests-tab" class="tab-content">
+                <div class="card">
+                    <h2>Today's Quests</h2>
+                    <div id="daily-quests-list"></div>
+                </div>
+                
+                <div class="card">
+                    <h2>Weekly Challenge</h2>
+                    <div id="weekly-challenge">
+                        <div class="quest-item">
+                            <div class="quest-info">
+                                <h4>Loading challenge...</h4>
+                                <p>Check back soon!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Log Tab -->
+            <div id="log-tab" class="tab-content">
+                <div class="card">
+                    <h2>Quick Log</h2>
+                    <p>Track your daily habits quickly and easily</p>
+                    
+                    <div class="quick-log-grid">
+                        <div class="log-card" onclick="openLogModal('nutrition')">
+                            <div class="log-card-icon">🥗</div>
+                            <div class="log-card-title">Nutrition</div>
+                            <div class="log-card-description">Log meals & water</div>
+                        </div>
+                        
+                        <div class="log-card" onclick="openLogModal('movement')">
+                            <div class="log-card-icon">🏃</div>
+                            <div class="log-card-title">Movement</div>
+                            <div class="log-card-description">Track activities</div>
+                        </div>
+                        
+                        <div class="log-card" onclick="openLogModal('recovery')">
+                            <div class="log-card-icon">😴</div>
+                            <div class="log-card-title">Recovery</div>
+                            <div class="log-card-description">Log sleep & rest</div>
+                        </div>
+                        
+                        <div class="log-card" onclick="openLogModal('mindfulness')">
+                            <div class="log-card-icon">🧘</div>
+                            <div class="log-card-title">Mindfulness</div>
+                            <div class="log-card-description">Track mood & meditation</div>
+                        </div>
+                        
+                        <div class="log-card" onclick="openLogModal('weight')">
+                            <div class="log-card-icon">⚖️</div>
+                            <div class="log-card-title">Weight</div>
+                            <div class="log-card-description">Optional tracking</div>
+                        </div>
+                        
+                        <div class="log-card" onclick="openLogModal('custom')">
+                            <div class="log-card-icon">✨</div>
+                            <div class="log-card-title">Custom</div>
+                            <div class="log-card-description">Track anything</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Today's Logs</h2>
+                    <div id="todays-logs">
+                        <p style="text-align: center; color: var(--text-muted);">No logs yet today. Start tracking!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Squad Tab -->
+            <div id="squad-tab" class="tab-content">
+                <div class="card">
+                    <h2>Squad Hub</h2>
+                    <div style="text-align: center; padding: 2rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">👥</div>
+                        <h3>Join or Create a Squad</h3>
+                        <p style="color: var(--text-muted); margin: 1rem 0;">Team up with friends for motivation and accountability</p>
+                        <button class="btn" onclick="showToast('Squad feature coming soon!', 'info')">Find Squad</button>
+                        <button class="btn btn-secondary" style="margin-left: 0.5rem;" onclick="showToast('Create squad coming soon!', 'info')">Create Squad</button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Squad Leaderboard</h2>
+                    <p style="text-align: center; color: var(--text-muted);">Join a squad to see rankings!</p>
+                </div>
+            </div>
+
+            <!-- Live Events Tab -->
+            <div id="events-tab" class="tab-content">
+                <div class="card">
+                    <h2>🎄 Winter Wellness Challenge</h2>
+                    <p>December 1 - January 31</p>
+                    <div class="progress-bar" style="margin: 1rem 0;">
+                        <div class="progress-fill" style="width: 35%;">
+                            <span class="progress-text">35% Complete</span>
+                        </div>
+                    </div>
+                    <h3>Event Quests</h3>
+                    <div style="margin-top: 1rem;">
+                        <div class="quest-item">
+                            <div class="quest-info">
+                                <h4>❄️ Winter Walking</h4>
+                                <p>Take a 20-minute winter walk</p>
+                                <div class="quest-meta">
+                                    <span class="xp-badge">50 XP</span>
+                                    <span class="difficulty easy">seasonal</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm">Complete</button>
+                        </div>
+                        <div class="quest-item">
+                            <div class="quest-info">
+                                <h4>☕ Mindful Morning</h4>
+                                <p>Start your day with 5 minutes of gratitude</p>
+                                <div class="quest-meta">
+                                    <span class="xp-badge">30 XP</span>
+                                    <span class="difficulty easy">seasonal</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm">Complete</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>Upcoming Events</h2>
+                    <div style="padding: 1rem;">
+                        <p>🎊 New Year Reset - Starting January 1</p>
+                        <p>💝 Heart Health Month - February</p>
+                        <p>🌸 Spring Into Fitness - March</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Tab -->
+            <div id="progress-tab" class="tab-content">
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h2>Weight Tracker</h2>
+                        <p style="text-align: center; color: var(--text-muted);">Optional - Focus on habits, not numbers!</p>
+                        <button class="btn btn-secondary" onclick="openLogModal('weight')" style="width: 100%; margin-top: 1rem;">Log Weight</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h2>Achievement Progress</h2>
+                        <div style="margin-top: 1rem;">
+                            <p>🏆 First Quest - Complete your first quest</p>
+                            <p>🔥 Week Warrior - 7-day streak</p>
+                            <p>💪 Strength Builder - Reach Level 5 in Strength</p>
+                            <p>🧘 Zen Master - 30 minutes of meditation</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h2>Monthly Summary</h2>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">15</div>
+                                <div class="stat-label">Active Days</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">42</div>
+                                <div class="stat-label">Quests Done</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">3.5</div>
+                                <div class="stat-label">Avg WAHD</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">850</div>
+                                <div class="stat-label">Total XP</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Log Modal -->
+    <div id="log-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Quick Log</h2>
+                <button class="close-btn" onclick="closeModal('log-modal')">×</button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <!-- Dynamic content loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('log-modal')">Cancel</button>
+                <button class="btn" onclick="saveLog()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Account Modal -->
+    <div id="account-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Account Settings</h2>
+                <button class="close-btn" onclick="closeModal('account-modal')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" class="form-control" id="account-name" value="Health Seeker">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" id="account-email" placeholder="your@email.com">
+                </div>
+                <hr style="margin: 1.5rem 0; border-color: var(--border);">
+                <h3>Data Management</h3>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem;">
+                    <button class="btn btn-secondary" onclick="exportData()">📥 Export My Data</button>
+                    <button class="btn btn-secondary" onclick="importData()">📤 Import Data</button>
+                    <button class="btn btn-secondary" style="background: var(--danger);" onclick="resetAccount()">🗑️ Reset Account</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('account-modal')">Close</button>
+                <button class="btn" onclick="saveAccount()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
     <script>
-        // Inline Config to ensure it's available immediately
-        const Config = {
-            VERSION: '2.0.0',
-            GAME: {
-                MAX_DAILY_XP: 200,
-                XP_PER_LEVEL: 100,
-                SKILL_XP_PER_LEVEL: 50,
-                MIN_HABITS_FOR_WAHD: 3,
-                STREAK_FORGIVENESS_DAYS: 1,
-                QUEST_HISTORY_DAYS: 30,
-                MAX_PLAYER_LEVEL: 100,
-                MAX_SKILL_LEVEL: 50
+        // Game State
+        let gameState = {
+            player: {
+                name: 'Health Seeker',
+                level: 1,
+                currentXP: 0,
+                totalXP: 0,
+                dailyXP: 0,
+                avatar: {
+                    emoji: '🌱',
+                    title: 'Novice Wellness Warrior'
+                },
+                skills: {
+                    nutrition: 1,
+                    strength: 1,
+                    cardio: 1,
+                    recovery: 1,
+                    mindfulness: 1
+                },
+                stats: {
+                    wahd: 0,
+                    streak: 0,
+                    questsCompleted: 0,
+                    perfectDays: 0,
+                    totalActivities: 0,
+                    achievements: []
+                }
             },
-            STORAGE: {
-                PLAYER_DATA: 'healthquest_player',
-                QUEST_HISTORY: 'healthquest_quests',
-                ACHIEVEMENTS: 'healthquest_achievements',
-                AUTO_SAVE_INTERVAL: 30000
-            },
-            FEATURES: {
-                ANALYTICS: true,
-                NOTIFICATIONS: true
-            }
+            dailyQuests: [],
+            todaysLogs: [],
+            currentTab: 'dashboard'
         };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGameState();
+            initializeGame();
+            hideLoadingScreen();
+        });
+
+        function initializeGame() {
+            updateUI();
+            generateDailyQuests();
+            updateWeekProgress();
+            setupAutoSave();
+        }
+
+        function hideLoadingScreen() {
+            const loadingScreen = document.getElementById('loading-screen');
+            const app = document.getElementById('app');
+            
+            setTimeout(() => {
+                loadingScreen.classList.add('fade-out');
+                app.classList.add('active');
+                
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 1000);
+        }
+
+        // Tab Switching
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.tab-btn').classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            gameState.currentTab = tabName;
+        }
+
+        // UI Updates
+        function updateUI() {
+            const player = gameState.player;
+            
+            // Update header
+            document.getElementById('user-name').textContent = player.name;
+            document.getElementById('user-level').textContent = player.level;
+            
+            // Update avatar
+            document.getElementById('avatar-display').textContent = player.avatar.emoji;
+            document.getElementById('avatar-title').textContent = player.avatar.title;
+            
+            // Update XP
+            const maxXP = player.level * 100;
+            const xpPercent = (player.currentXP / maxXP) * 100;
+            document.getElementById('xp-progress').style.width = xpPercent + '%';
+            document.getElementById('current-xp').textContent = player.currentXP;
+            document.getElementById('max-xp').textContent = maxXP;
+            document.getElementById('daily-xp').textContent = player.dailyXP;
+            
+            // Update skills
+            Object.keys(player.skills).forEach(skill => {
+                const element = document.getElementById(`skill-${skill}`);
+                if (element) {
+                    element.textContent = player.skills[skill];
+                }
+            });
+            
+            // Update stats
+            document.getElementById('wahd-current').textContent = player.stats.wahd;
+            document.getElementById('current-streak').textContent = player.stats.streak;
+            document.getElementById('quests-completed').textContent = player.stats.questsCompleted;
+            document.getElementById('perfect-days').textContent = player.stats.perfectDays;
+            document.getElementById('total-activities').textContent = player.stats.totalActivities;
+            document.getElementById('achievements-count').textContent = player.stats.achievements.length;
+        }
+
+        // Quest Generation
+        function generateDailyQuests() {
+            const questTemplates = [
+                { category: 'nutrition', icon: '🥗', title: 'Mindful Eating', description: 'Eat one meal without distractions', xp: 25, difficulty: 'easy' },
+                { category: 'movement', icon: '🏃', title: 'Morning Movement', description: '10-minute walk or stretch', xp: 20, difficulty: 'easy' },
+                { category: 'recovery', icon: '😴', title: 'Quality Sleep', description: 'Get 7+ hours of sleep', xp: 30, difficulty: 'medium' },
+                { category: 'mindfulness', icon: '🧘', title: 'Gratitude Practice', description: 'Write 3 things you\'re grateful for', xp: 15, difficulty: 'easy' }
+            ];
+            
+            gameState.dailyQuests = questTemplates.map((template, index) => ({
+                ...template,
+                id: `quest_${index}`,
+                completed: false
+            }));
+            
+            renderQuests();
+        }
+
+        function renderQuests() {
+            const container = document.getElementById('daily-quests-list');
+            if (!container) return;
+            
+            container.innerHTML = gameState.dailyQuests.map(quest => `
+                <div class="quest-item ${quest.category} ${quest.completed ? 'completed' : ''}">
+                    <div class="quest-info">
+                        <h4>${quest.icon} ${quest.title}</h4>
+                        <p>${quest.description}</p>
+                        <div class="quest-meta">
+                            <span class="xp-badge">${quest.xp} XP</span>
+                            <span class="difficulty ${quest.difficulty}">${quest.difficulty}</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-sm" onclick="completeQuest('${quest.id}')" ${quest.completed ? 'disabled' : ''}>
+                        ${quest.completed ? '✅ Done' : 'Complete'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function completeQuest(questId) {
+            const quest = gameState.dailyQuests.find(q => q.id === questId);
+            if (!quest || quest.completed) return;
+            
+            quest.completed = true;
+            gameState.player.currentXP += quest.xp;
+            gameState.player.totalXP += quest.xp;
+            gameState.player.dailyXP += quest.xp;
+            gameState.player.stats.questsCompleted++;
+            
+            // Check level up
+            const maxXP = gameState.player.level * 100;
+            if (gameState.player.currentXP >= maxXP) {
+                gameState.player.level++;
+                gameState.player.currentXP -= maxXP;
+                updateAvatar();
+                showToast(`Level Up! You're now level ${gameState.player.level}!`, 'success');
+            }
+            
+            // Check daily completion
+            const completedToday = gameState.dailyQuests.filter(q => q.completed).length;
+            if (completedToday >= 3) {
+                gameState.player.stats.wahd = Math.min(7, gameState.player.stats.wahd + 1);
+                updateWeekProgress();
+            }
+            
+            updateUI();
+            renderQuests();
+            saveGameState();
+            showToast(`Quest completed! +${quest.xp} XP`, 'success');
+        }
+
+        function updateAvatar() {
+            const avatarStages = {
+                1: { emoji: '🌱', title: 'Novice Wellness Warrior' },
+                5: { emoji: '🌿', title: 'Growing Guardian' },
+                10: { emoji: '🌳', title: 'Balanced Builder' },
+                15: { emoji: '🏔️', title: 'Harmony Hero' },
+                20: { emoji: '⭐', title: 'Wellness Wizard' },
+                25: { emoji: '🌟', title: 'Health Champion' },
+                30: { emoji: '💎', title: 'Lifestyle Legend' }
+            };
+            
+            const stage = Object.keys(avatarStages)
+                .reverse()
+                .find(level => gameState.player.level >= parseInt(level));
+            
+            if (stage) {
+                gameState.player.avatar = avatarStages[stage];
+            }
+        }
+
+        function updateWeekProgress() {
+            const today = new Date().getDay();
+            const adjustedToday = today === 0 ? 6 : today - 1; // Adjust for Monday start
+            
+            document.querySelectorAll('.day-circle').forEach((circle, index) => {
+                circle.classList.remove('active', 'today');
+                if (index < gameState.player.stats.wahd) {
+                    circle.classList.add('active');
+                }
+                if (index === adjustedToday) {
+                    circle.classList.add('today');
+                }
+            });
+        }
+
+        // Modals
+        function openLogModal(type) {
+            const modal = document.getElementById('log-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalBody = document.getElementById('modal-body');
+            
+            const forms = {
+                nutrition: `
+                    <div class="form-group">
+                        <label>Meal Type</label>
+                        <select class="form-control" id="log-meal-type">
+                            <option>Breakfast</option>
+                            <option>Lunch</option>
+                            <option>Dinner</option>
+                            <option>Snack</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <input type="text" class="form-control" id="log-meal-desc" placeholder="What did you eat?">
+                    </div>
+                    <div class="form-group">
+                        <label>How do you feel?</label>
+                        <select class="form-control" id="log-meal-feeling">
+                            <option>Energized</option>
+                            <option>Satisfied</option>
+                            <option>Neutral</option>
+                            <option>Sluggish</option>
+                        </select>
+                    </div>
+                `,
+                movement: `
+                    <div class="form-group">
+                        <label>Activity Type</label>
+                        <select class="form-control" id="log-activity-type">
+                            <option>Walk</option>
+                            <option>Run</option>
+                            <option>Bike</option>
+                            <option>Swim</option>
+                            <option>Yoga</option>
+                            <option>Strength Training</option>
+                            <option>Sports</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Duration (minutes)</label>
+                        <input type="number" class="form-control" id="log-activity-duration" placeholder="30">
+                    </div>
+                    <div class="form-group">
+                        <label>Intensity</label>
+                        <select class="form-control" id="log-activity-intensity">
+                            <option>Light</option>
+                            <option>Moderate</option>
+                            <option>Vigorous</option>
+                        </select>
+                    </div>
+                `,
+                recovery: `
+                    <div class="form-group">
+                        <label>Sleep Hours</label>
+                        <input type="number" class="form-control" id="log-sleep-hours" placeholder="8" step="0.5">
+                    </div>
+                    <div class="form-group">
+                        <label>Sleep Quality</label>
+                        <select class="form-control" id="log-sleep-quality">
+                            <option>Excellent</option>
+                            <option>Good</option>
+                            <option>Fair</option>
+                            <option>Poor</option>
+                        </select>
+                    </div>
+                `,
+                mindfulness: `
+                    <div class="form-group">
+                        <label>Activity</label>
+                        <select class="form-control" id="log-mindfulness-type">
+                            <option>Meditation</option>
+                            <option>Breathing Exercise</option>
+                            <option>Gratitude Journal</option>
+                            <option>Mindful Walk</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Duration (minutes)</label>
+                        <input type="number" class="form-control" id="log-mindfulness-duration" placeholder="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Current Mood</label>
+                        <select class="form-control" id="log-mood">
+                            <option>Happy</option>
+                            <option>Calm</option>
+                            <option>Energized</option>
+                            <option>Stressed</option>
+                            <option>Tired</option>
+                        </select>
+                    </div>
+                `,
+                weight: `
+                    <div class="form-group">
+                        <label>Current Weight</label>
+                        <input type="number" class="form-control" id="log-weight" placeholder="Enter weight" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label>Unit</label>
+                        <select class="form-control" id="log-weight-unit">
+                            <option>lbs</option>
+                            <option>kg</option>
+                        </select>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.875rem;">
+                        Remember: Focus on how you feel, not just the numbers! Weight is just one metric of many.
+                    </p>
+                `,
+                custom: `
+                    <div class="form-group">
+                        <label>Custom Habit</label>
+                        <input type="text" class="form-control" id="log-custom-name" placeholder="Habit name">
+                    </div>
+                    <div class="form-group">
+                        <label>Notes</label>
+                        <textarea class="form-control" id="log-custom-notes" rows="3" placeholder="Details about your habit"></textarea>
+                    </div>
+                `
+            };
+            
+            modalTitle.textContent = `Log ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+            modalBody.innerHTML = forms[type] || '<p>Coming soon!</p>';
+            modalBody.dataset.logType = type;
+            
+            modal.classList.add('active');
+        }
+
+        function openAccountModal() {
+            const modal = document.getElementById('account-modal');
+            document.getElementById('account-name').value = gameState.player.name;
+            modal.classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function saveLog() {
+            const logType = document.getElementById('modal-body').dataset.logType;
+            
+            // Add to today's logs
+            const logEntry = {
+                type: logType,
+                timestamp: new Date().toISOString(),
+                data: {} // Would collect form data here
+            };
+            
+            gameState.todaysLogs.push(logEntry);
+            gameState.player.stats.totalActivities++;
+            
+            // Add XP reward
+            gameState.player.currentXP += 10;
+            gameState.player.totalXP += 10;
+            gameState.player.dailyXP += 10;
+            
+            updateUI();
+            saveGameState();
+            closeModal('log-modal');
+            showToast(`${logType} logged! +10 XP`, 'success');
+        }
+
+        function saveAccount() {
+            gameState.player.name = document.getElementById('account-name').value;
+            updateUI();
+            saveGameState();
+            closeModal('account-modal');
+            showToast('Account settings saved!', 'success');
+        }
+
+        // Data Management
+        function saveGameState() {
+            localStorage.setItem('healthquest_gamestate', JSON.stringify(gameState));
+        }
+
+        function loadGameState() {
+            const saved = localStorage.getItem('healthquest_gamestate');
+            if (saved) {
+                gameState = JSON.parse(saved);
+            }
+        }
+
+        function setupAutoSave() {
+            setInterval(saveGameState, 30000); // Auto-save every 30 seconds
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(gameState, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `healthquest_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Data exported successfully!', 'success');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        gameState = JSON.parse(event.target.result);
+                        saveGameState();
+                        updateUI();
+                        renderQuests();
+                        showToast('Data imported successfully!', 'success');
+                    } catch (error) {
+                        showToast('Failed to import data', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function resetAccount() {
+            if (confirm('Are you sure? This will delete all your progress!')) {
+                if (confirm('Last chance! This cannot be undone.')) {
+                    localStorage.removeItem('healthquest_gamestate');
+                    location.reload();
+                }
+            }
+        }
+
+        // Toast Notifications
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+            
+            toast.innerHTML = `<span>${icons[type]}</span><span>${message}</span>`;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.3s forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
     </script>
-    
-    <!-- Load core files first -->
-    <script src="js/core/constants.js"></script>
-    <script src="js/core/eventbus.js"></script>
-    <script src="js/core/storage.js"></script>
-    
-    <!-- Load models -->
-    <script src="js/models/player.js"></script>
-    <script src="js/models/stubs.js"></script>
-    
-    <!-- Load systems -->
-    <script src="js/systems/quest-system.js"></script>
-    <script src="js/systems/stubs.js"></script>
-    
-    <!-- Load UI stubs -->
-    <script src="js/ui/stubs.js"></script>
-    
-    <!-- Load main game files -->
-    <script src="js/game.js"></script>
-    <script src="js/app.js"></script>
 </body>
 </html>
