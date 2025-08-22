@@ -263,6 +263,46 @@ class GameManager {
         });
     }
     
+    // QUEST COMPLETION METHOD - This was missing!
+    completeQuest(questId) {
+        const quest = this.systems.quests.dailyQuests.find(q => q.id === questId);
+        
+        if (!quest) {
+            console.error('Quest not found:', questId);
+            UI.showToast('Quest not found!', 'error');
+            return;
+        }
+        
+        if (quest.completed) {
+            UI.showToast('Quest already completed!', 'warning');
+            return;
+        }
+        
+        // Use the quest system's complete method
+        const result = this.systems.quests.completeQuest(questId, this.player);
+        
+        if (result.success) {
+            // Update UI
+            UI.loadQuests();
+            
+            // Show success message
+            UI.showToast(`Quest completed! +${result.xpGained} XP`, 'success');
+            
+            // Check for level up
+            if (result.levelUp && result.levelUp.leveled) {
+                this.handleLevelUp({
+                    player: this.player,
+                    newLevel: result.levelUp.newLevel
+                });
+            }
+            
+            // Save game
+            this.saveGame();
+        } else {
+            UI.showToast(result.message || 'Failed to complete quest', 'error');
+        }
+    }
+    
     handleQuestCompletion(data) {
         const { quest, player, xpGained } = data;
         
@@ -273,6 +313,7 @@ class GameManager {
         const completedCount = Object.values(this.data.todaysHabits).filter(Boolean).length;
         if (completedCount >= Config.GAME.MIN_HABITS_FOR_WAHD) {
             this.player.updateWAHD(completedCount);
+            UI.showToast(`WAHD Progress: ${this.player.stats.wahd.current}/7`, 'info');
         }
         
         // Check achievements
@@ -287,11 +328,35 @@ class GameManager {
             });
         }
         
+        // Update UI to show new player stats
+        const appRoot = document.getElementById('app-root');
+        if (appRoot) {
+            // Update level and XP display
+            const levelDisplay = appRoot.querySelector('h2');
+            if (levelDisplay) {
+                levelDisplay.innerHTML = `Welcome, ${this.player.name}!`;
+            }
+            
+            const statsDisplay = appRoot.querySelector('p');
+            if (statsDisplay) {
+                statsDisplay.innerHTML = `Level ${this.player.level} ${this.player.avatar.title}`;
+            }
+            
+            // Update progress bar
+            const progressBar = appRoot.querySelector('.progress-fill');
+            if (progressBar) {
+                const percentage = (this.player.currentXP / (this.player.level * Config.GAME.XP_PER_LEVEL)) * 100;
+                progressBar.style.width = `${percentage}%`;
+            }
+            
+            const xpDisplay = appRoot.querySelectorAll('p')[1];
+            if (xpDisplay) {
+                xpDisplay.innerHTML = `${this.player.currentXP} / ${this.player.level * Config.GAME.XP_PER_LEVEL} XP`;
+            }
+        }
+        
         // Save game
         this.saveGame();
-        
-        // Show completion feedback
-        UI.showToast(`Quest completed! +${xpGained} XP`, 'success');
     }
     
     handleLevelUp(data) {
@@ -517,7 +582,7 @@ class GameManager {
     
     resetProgress() {
         if (confirm('Are you sure you want to reset all progress? This cannot be undone!')) {
-            if (confirm('Last chance! Type "RESET" to confirm.')) {
+            if (confirm('Last chance! This will delete everything. Continue?')) {
                 // Clear all storage
                 Storage.clear();
                 
