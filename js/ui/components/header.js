@@ -396,4 +396,93 @@ class LogModalComponent {
                 </div>
             `,
             recovery: `
-                <div class="form-group
+                <div class="form-group">
+                    <label>Sleep Hours</label>
+                    <input type="number" class="form-control" id="log-sleep-hours" 
+                           placeholder="8" step="0.5" min="4" max="12">
+                </div>
+                <div class="form-group">
+                    <label>Sleep Quality</label>
+                    <select class="form-control" id="log-sleep-quality">
+                        <option>Excellent</option>
+                        <option>Good</option>
+                        <option>Fair</option>
+                        <option>Poor</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Bedtime Routine</label>
+                    <select class="form-control" id="log-bedtime-routine">
+                        <option>No screens</option>
+                        <option>Meditation</option>
+                        <option>Reading</option>
+                        <option>Stretching</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+            `,
+            mindfulness: `
+                <div class="form-group">
+                    <label>Activity</label>
+                    <select class="form-control" id="log-mindfulness-type">
+                        <option>Meditation</option>
+                        <option>Breathing Exercise</option>
+                        <option>Gratitude Journal</option>
+                        <option>Mindful Walk</option>
+                        <option>Yoga</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Duration (minutes)</label>
+                    <input type="number" class="form-control" id="log-mindfulness-duration" 
+                           placeholder="10" min="3" max="60">
+                </div>
+                <div class="form-group">
+                    <label>Current Mood</label>
+                    <select class="form-control" id="log-mood">
+                        ${Config.MINDFULNESS.MOOD_OPTIONS.map(mood => 
+                            `<option value="${mood}">${mood}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+            `,
+            weight: `
+                <div class="form-group">
+                    <label>Current Weight</label>
+                    <input type="number" class="form-control" id="log-weight" 
+                           placeholder="Enter weight" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Unit</label>
+                    <select class="form-control" id="log-weight-unit">
+                        <option>lbs</option>
+                        <option>kg</option>
+                    </select>
+                </div>
+                <p class="body-positive-note">
+                    Remember: Focus on how you feel, not just the numbers! 
+                    Weight is just one metric of many.
+                </p>
+            `,
+            custom: `
+                <div class="form-group">
+                    <label>Custom Habit</label>
+                    <input type="text" class="form-control" id="log-custom-name" 
+                           placeholder="Habit name">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select class="form-control" id="log-custom-category">
+                        <option>Nutrition</option>
+                        <option>Movement</option>
+                        <option>Recovery</option>
+                        <option>Mindfulness</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea class="form-control" id="log-custom-notes" 
+                              rows="3" placeholder="Details about your habit"></textarea>
+                </div>
+            `
