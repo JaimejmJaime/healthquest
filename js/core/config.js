@@ -42,14 +42,14 @@ const Config = {
     
     // Feature Flags
     FEATURES: {
-        SQUADS: false, // Phase 2
-        EVENTS: false, // Phase 2
-        CLOUD_SYNC: false, // Phase 2
-        WEARABLE_SYNC: false, // Phase 3
-        BARCODE_SCANNER: false, // Phase 3
-        AI_INSIGHTS: false, // Phase 4
-        PREMIUM: false, // Phase 4
-        VOICE_COMMANDS: false, // Future
+        SQUADS: false,
+        EVENTS: false,
+        CLOUD_SYNC: false,
+        WEARABLE_SYNC: false,
+        BARCODE_SCANNER: false,
+        AI_INSIGHTS: false,
+        PREMIUM: false,
+        VOICE_COMMANDS: false,
         SOCIAL_SHARING: true,
         ACHIEVEMENTS: true,
         ANALYTICS: true,
@@ -59,13 +59,13 @@ const Config = {
         DATA_EXPORT: true,
         ONBOARDING: true,
         WEIGHT_TRACKING: true,
-        PHOTOS: false, // Phase 2
+        PHOTOS: false,
         CHARTS: true
     },
     
     // API Configuration (for future backend)
     API: {
-        BASE_URL: process.env.API_URL || 'https://api.healthquest.app',
+        BASE_URL: 'https://api.healthquest.app',
         VERSION: 'v1',
         ENDPOINTS: {
             AUTH: '/auth',
@@ -98,13 +98,13 @@ const Config = {
     
     // Nutrition Configuration
     NUTRITION: {
-        DAILY_WATER_GOAL: 8, // glasses
+        DAILY_WATER_GOAL: 8,
         MEAL_TYPES: ['breakfast', 'lunch', 'dinner', 'snack'],
         PORTION_SIZES: ['small', 'medium', 'large'],
         FOOD_FEELINGS: ['energized', 'satisfied', 'neutral', 'sluggish', 'bloated'],
-        MACRO_TRACKING: false, // Phase 2
-        CALORIE_TRACKING: false, // Intentionally avoided for body-positive approach
-        PHOTO_MEALS: false // Phase 2
+        MACRO_TRACKING: false,
+        CALORIE_TRACKING: false,
+        PHOTO_MEALS: false
     },
     
     // Movement Configuration
@@ -114,19 +114,19 @@ const Config = {
             'strength', 'sports', 'dance', 'hike', 'other'
         ],
         INTENSITY_LEVELS: ['light', 'moderate', 'vigorous'],
-        MIN_ACTIVITY_DURATION: 5, // minutes
-        MAX_ACTIVITY_DURATION: 300, // minutes
+        MIN_ACTIVITY_DURATION: 5,
+        MAX_ACTIVITY_DURATION: 300,
         STEP_GOAL_DEFAULT: 8000,
-        WORKOUT_LIBRARY: false // Phase 2
+        WORKOUT_LIBRARY: false
     },
     
     // Recovery Configuration
     RECOVERY: {
-        SLEEP_GOAL_DEFAULT: 8, // hours
+        SLEEP_GOAL_DEFAULT: 8,
         MIN_SLEEP_HOURS: 4,
         MAX_SLEEP_HOURS: 12,
         SLEEP_QUALITY: ['poor', 'fair', 'good', 'excellent'],
-        NAP_DURATION_OPTIONS: [10, 15, 20, 30, 45, 60], // minutes
+        NAP_DURATION_OPTIONS: [10, 15, 20, 30, 45, 60],
         BEDTIME_ROUTINES: [
             'no_screens', 'meditation', 'reading', 'stretching', 
             'journaling', 'bath', 'tea', 'music'
@@ -135,7 +135,7 @@ const Config = {
     
     // Mindfulness Configuration
     MINDFULNESS: {
-        MEDITATION_DURATIONS: [3, 5, 10, 15, 20, 30], // minutes
+        MEDITATION_DURATIONS: [3, 5, 10, 15, 20, 30],
         MOOD_OPTIONS: [
             'happy', 'calm', 'energized', 'focused', 'grateful',
             'tired', 'stressed', 'anxious', 'sad', 'frustrated'
@@ -177,7 +177,7 @@ const Config = {
     // Analytics Configuration
     ANALYTICS: {
         TRACK_EVENTS: true,
-        SESSION_TIMEOUT: 1800000, // 30 minutes
+        SESSION_TIMEOUT: 1800000,
         MAX_EVENTS_PER_SESSION: 1000,
         BATCH_SIZE: 50,
         RETENTION_DAYS: 90,
@@ -192,19 +192,19 @@ const Config = {
     // Safety & Ethics Configuration
     SAFETY: {
         RESTRICTION_WARNING_THRESHOLD: 3,
-        MIN_DAILY_CALORIES: 1200, // Not tracked but used for safety checks
+        MIN_DAILY_CALORIES: 1200,
         MAX_EXERCISE_HOURS_DAILY: 4,
         REQUIRED_REST_DAYS_WEEKLY: 1,
         MENTAL_HEALTH_CHECK_DAYS: 7,
         BODY_POSITIVE_LANGUAGE: true,
-        WEIGHT_FOCUS: false, // Always false - focus on habits
-        APPEARANCE_BASED_GOALS: false // Always false
+        WEIGHT_FOCUS: false,
+        APPEARANCE_BASED_GOALS: false
     },
     
     // Development Configuration
     DEV: {
         DEBUG: false,
-        LOG_LEVEL: 'info', // 'debug', 'info', 'warn', 'error'
+        LOG_LEVEL: 'info',
         SHOW_FPS: false,
         MOCK_DATA: false,
         SKIP_ONBOARDING: false,
@@ -289,6 +289,7 @@ const Config = {
 
 // Initialize on load
 if (typeof window !== 'undefined') {
+    window.Config = Config;
     window.HealthQuestConfig = Config;
     Config.init();
 }
