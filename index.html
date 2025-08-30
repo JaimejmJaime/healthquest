@@ -9,6 +9,7 @@
     <!-- PWA Support -->
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#4ade80">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
@@ -21,13 +22,9 @@
     <link rel="stylesheet" href="styles/components.css">
     <link rel="stylesheet" href="styles/animations.css">
     <link rel="stylesheet" href="styles/main.css">
-    
-    <!-- Preconnect to external resources -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 </head>
 <body>
-    <div id="app" class="app-wrapper">
+    <div id="app">
         <!-- Loading Screen -->
         <div id="loading-screen" class="loading-screen">
             <div class="loading-content">
@@ -41,13 +38,13 @@
         </div>
 
         <!-- Main App Root -->
-        <div id="app-root" class="app-root"></div>
+        <div id="app-root" class="app-root" style="display: none;"></div>
 
-        <!-- Toast Container (for notifications) -->
+        <!-- Toast Container -->
         <div id="toast-container" class="toast-container"></div>
     </div>
 
-    <!-- Core Configuration -->
+    <!-- Core Configuration (Fixed version without process.env) -->
     <script src="js/core/config.js"></script>
     <script src="js/core/constants.js"></script>
     
@@ -55,15 +52,10 @@
     <script src="js/core/eventbus.js"></script>
     <script src="js/core/storage.js"></script>
     
-    <!-- Models -->
+    <!-- Models (only existing ones) -->
     <script src="js/models/player.js"></script>
     <script src="js/models/quest.js"></script>
     <script src="js/models/achievement.js"></script>
-    <script src="js/models/habit.js"></script>
-    <script src="js/models/meal.js"></script>
-    <script src="js/models/activity.js"></script>
-    <script src="js/models/sleep.js"></script>
-    <script src="js/models/mood.js"></script>
     
     <!-- Game Systems -->
     <script src="js/systems/quest-system.js"></script>
@@ -73,28 +65,11 @@
     <script src="js/systems/wahd-system.js"></script>
     <script src="js/systems/streak-system.js"></script>
     
-    <!-- UI Components -->
-    <script src="js/ui/components/header.js"></script>
-    <script src="js/ui/components/navigation.js"></script>
-    <script src="js/ui/components/avatar.js"></script>
-    <script src="js/ui/components/progress-bar.js"></script>
-    <script src="js/ui/components/quest-card.js"></script>
-    <script src="js/ui/components/skill-tree.js"></script>
-    <script src="js/ui/components/week-progress.js"></script>
-    <script src="js/ui/components/stats-card.js"></script>
-    <script src="js/ui/components/log-modal.js"></script>
-    <script src="js/ui/components/account-modal.js"></script>
+    <!-- UI Components (existing ones) -->
     <script src="js/ui/components/toast.js"></script>
     <script src="js/ui/components/celebration-modal.js"></script>
+    <script src="js/ui/components/account-modal.js"></script>
     <script src="js/ui/components/onboarding-modal.js"></script>
-    
-    <!-- UI Views -->
-    <script src="js/ui/views/dashboard-view.js"></script>
-    <script src="js/ui/views/quests-view.js"></script>
-    <script src="js/ui/views/quick-log-view.js"></script>
-    <script src="js/ui/views/squad-view.js"></script>
-    <script src="js/ui/views/events-view.js"></script>
-    <script src="js/ui/views/progress-view.js"></script>
     
     <!-- UI Manager -->
     <script src="js/ui/ui-manager.js"></script>
@@ -107,64 +82,18 @@
     
     <!-- Service Worker Registration -->
     <script>
-        // Register service worker for offline functionality
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registered:', registration.scope);
-                    })
-                    .catch(err => {
-                        console.log('ServiceWorker registration failed:', err);
-                    });
+                    .then(registration => console.log('ServiceWorker registered'))
+                    .catch(err => console.log('ServiceWorker registration failed:', err));
             });
         }
-        
-        // Check for app install capability
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            // Show install button in UI when ready
-            if (window.UI && window.UI.initialized) {
-                UI.showInstallPrompt(deferredPrompt);
-            }
-        });
-        
-        // Handle app installed
-        window.addEventListener('appinstalled', () => {
-            console.log('HealthQuest installed successfully!');
-            if (window.UI) {
-                UI.showToast('App installed! You can now use HealthQuest offline.', 'success');
-            }
-        });
     </script>
     
-    <!-- Fallback for missing files -->
+    <!-- Stub for missing models -->
     <script>
-        // Temporary stubs for any files that might not exist yet
-        // These will be overridden by the actual implementations when loaded
-        
-        // Check for missing models
-        if (typeof Quest === 'undefined') {
-            class Quest {
-                constructor(data = {}) {
-                    Object.assign(this, data);
-                }
-            }
-            window.Quest = Quest;
-        }
-        
-        if (typeof Achievement === 'undefined') {
-            class Achievement {
-                constructor(data = {}) {
-                    Object.assign(this, data);
-                }
-            }
-            window.Achievement = Achievement;
-        }
-        
+        // Temporary stubs for missing model files
         if (typeof Habit === 'undefined') {
             class Habit {
                 constructor(data = {}) {
@@ -208,229 +137,6 @@
                 }
             }
             window.Mood = Mood;
-        }
-        
-        // Check for missing systems
-        if (typeof AchievementSystem === 'undefined') {
-            class AchievementSystem {
-                constructor() {
-                    this.achievements = [];
-                    this.unlocked = [];
-                }
-                
-                checkAchievements(player) {
-                    return [];
-                }
-                
-                getAchievement(id) {
-                    return this.achievements.find(a => a.id === id);
-                }
-                
-                toJSON() {
-                    return {
-                        achievements: this.achievements,
-                        unlocked: this.unlocked
-                    };
-                }
-                
-                static fromJSON(data) {
-                    const system = new AchievementSystem();
-                    system.achievements = data.achievements || [];
-                    system.unlocked = data.unlocked || [];
-                    return system;
-                }
-            }
-            window.AchievementSystem = AchievementSystem;
-        }
-        
-        if (typeof AnalyticsSystem === 'undefined') {
-            class AnalyticsSystem {
-                constructor() {
-                    this.events = [];
-                    this.session = null;
-                }
-                
-                track(event, data) {
-                    this.events.push({
-                        event,
-                        data,
-                        timestamp: Date.now()
-                    });
-                }
-                
-                startSession() {
-                    this.session = {
-                        start: Date.now(),
-                        events: []
-                    };
-                }
-                
-                pauseSession() {
-                    if (this.session) {
-                        this.session.paused = Date.now();
-                    }
-                }
-                
-                resumeSession() {
-                    if (this.session && this.session.paused) {
-                        delete this.session.paused;
-                    }
-                }
-                
-                toJSON() {
-                    return {
-                        events: this.events,
-                        session: this.session
-                    };
-                }
-                
-                static fromJSON(data) {
-                    const system = new AnalyticsSystem();
-                    system.events = data.events || [];
-                    system.session = data.session || null;
-                    return system;
-                }
-            }
-            window.AnalyticsSystem = AnalyticsSystem;
-        }
-        
-        if (typeof NotificationSystem === 'undefined') {
-            class NotificationSystem {
-                constructor() {
-                    this.enabled = false;
-                    this.permission = 'default';
-                }
-                
-                async init() {
-                    if ('Notification' in window) {
-                        this.permission = Notification.permission;
-                        if (this.permission === 'default') {
-                            this.permission = await Notification.requestPermission();
-                        }
-                        this.enabled = this.permission === 'granted';
-                    }
-                }
-                
-                updateSettings(setting, value) {
-                    // Stub implementation
-                }
-                
-                scheduleNotification(type, time, message) {
-                    // Stub implementation
-                }
-                
-                toJSON() {
-                    return {
-                        enabled: this.enabled,
-                        permission: this.permission
-                    };
-                }
-                
-                static fromJSON(data) {
-                    const system = new NotificationSystem();
-                    system.enabled = data.enabled || false;
-                    system.permission = data.permission || 'default';
-                    return system;
-                }
-            }
-            window.NotificationSystem = NotificationSystem;
-        }
-        
-        if (typeof WAHDSystem === 'undefined') {
-            class WAHDSystem {
-                constructor() {
-                    this.current = 0;
-                    this.history = [];
-                }
-                
-                update(value) {
-                    this.current = value;
-                    this.history.push({
-                        date: new Date().toISOString(),
-                        value: value
-                    });
-                }
-                
-                toJSON() {
-                    return {
-                        current: this.current,
-                        history: this.history
-                    };
-                }
-                
-                static fromJSON(data) {
-                    const system = new WAHDSystem();
-                    system.current = data.current || 0;
-                    system.history = data.history || [];
-                    return system;
-                }
-            }
-            window.WAHDSystem = WAHDSystem;
-        }
-        
-        if (typeof StreakSystem === 'undefined') {
-            class StreakSystem {
-                constructor() {
-                    this.current = 0;
-                    this.best = 0;
-                    this.lastActiveDate = null;
-                }
-                
-                updateStreak(player) {
-                    // This is handled in the player model
-                    this.current = player.stats.streaks.current;
-                    this.best = player.stats.streaks.best;
-                }
-                
-                toJSON() {
-                    return {
-                        current: this.current,
-                        best: this.best,
-                        lastActiveDate: this.lastActiveDate
-                    };
-                }
-                
-                static fromJSON(data) {
-                    const system = new StreakSystem();
-                    system.current = data.current || 0;
-                    system.best = data.best || 0;
-                    system.lastActiveDate = data.lastActiveDate || null;
-                    return system;
-                }
-            }
-            window.StreakSystem = StreakSystem;
-        }
-        
-        // Error boundary
-        window.addEventListener('error', function(event) {
-            console.error('Global error caught:', event.error);
-            
-            // Don't show error screen for missing component errors during load
-            if (event.error && event.error.message && 
-                (event.error.message.includes('Cannot read properties of undefined') ||
-                 event.error.message.includes('is not defined'))) {
-                console.warn('Component may still be loading...');
-                event.preventDefault();
-                return;
-            }
-            
-            // For other errors, show a user-friendly message
-            const loadingScreen = document.getElementById('loading-screen');
-            if (loadingScreen && loadingScreen.style.display !== 'none') {
-                const loadingMessage = document.getElementById('loading-message');
-                if (loadingMessage) {
-                    loadingMessage.innerHTML = `
-                        <span style="color: #fbbf24;">⚠️ Loading is taking longer than expected...</span>
-                        <br>
-                        <small>The app will start momentarily</small>
-                    `;
-                }
-            }
-        });
-        
-        // Ensure Config is available globally
-        if (typeof Config === 'undefined' && typeof HealthQuestConfig !== 'undefined') {
-            window.Config = window.HealthQuestConfig;
         }
     </script>
 </body>
