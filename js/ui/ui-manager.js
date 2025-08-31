@@ -389,16 +389,16 @@ class UIManager {
         // Simple onboarding implementation
         this.showToast('Welcome to HealthQuest! Complete quests to level up!', 'info', 5000);
     }
+
+    // In js/ui/ui-manager.js
+openLogModal(type) {
+    const modal = new HabitLogModal(this);
+    modal.open(type);
+}
     
     applyTheme(theme) {
         document.body.setAttribute('data-theme', theme);
     }
-}
-
-// In js/ui/ui-manager.js
-openLogModal(type) {
-    const modal = new HabitLogModal(this);
-    modal.open(type);
 }
 
 // Export
