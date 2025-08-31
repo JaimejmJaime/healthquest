@@ -36,6 +36,8 @@ class GameManager {
             
             // Initialize game systems
             this.updateLoadingMessage('Preparing quests...');
+            this.systems.habitLogging = new HabitLoggingSystem();
+            this.systems.habitLogging.loadFromStorage();
             await this.initializeSystems();
             
             // Check daily reset
