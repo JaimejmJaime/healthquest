@@ -272,7 +272,7 @@ class UIManager {
             `<div class="habit-indicator ${done ? 'complete' : ''}">${icons[habit]}</div>`
         ).join('');
     }
-    
+
     openLogModal(type) {
         const modal = document.getElementById('modal-container');
         if (!modal) return;
@@ -393,6 +393,12 @@ class UIManager {
     applyTheme(theme) {
         document.body.setAttribute('data-theme', theme);
     }
+}
+
+// In js/ui/ui-manager.js
+openLogModal(type) {
+    const modal = new HabitLogModal(this);
+    modal.open(type);
 }
 
 // Export
